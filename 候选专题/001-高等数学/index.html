@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MathVision｜可交互高等数学教程</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: rgba(15, 23, 42, 0.78);
+      --card: rgba(255, 255, 255, 0.08);
+      --card2: rgba(255, 255, 255, 0.12);
+      --line: rgba(255, 255, 255, 0.16);
+      --text: #f8fafc;
+      --muted: #cbd5e1;
+      --soft: #94a3b8;
+      --accent: #f97316;
+      --accent2: #38bdf8;
+      --accent3: #a78bfa;
+      --good: #22c55e;
+      --warn: #facc15;
+      --danger: #fb7185;
+      --shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(249, 115, 22, 0.24), transparent 34%),
+        radial-gradient(circle at top right, rgba(56, 189, 248, 0.18), transparent 34%),
+        linear-gradient(135deg, #020617, #0f172a 48%, #111827);
+      min-height: 100vh;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    .app {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      min-height: 100vh;
+    }
+
+    aside {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 24px 18px;
+      border-right: 1px solid var(--line);
+      background: rgba(2, 6, 23, 0.72);
+      backdrop-filter: blur(18px);
+      overflow-y: auto;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 26px;
+    }
+    .logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: grid;
+      place-items: center;
+      box-shadow: 0 16px 32px rgba(249, 115, 22, 0.25);
+      font-weight: 900;
+    }
+    .brand h1 {
+      font-size: 18px;
+      margin: 0;
+      letter-spacing: -0.02em;
+    }
+    .brand p {
+      margin: 2px 0 0;
+      color: var(--soft);
+      font-size: 12px;
+    }
+
+    nav {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    nav a {
+      padding: 10px 12px;
+      border-radius: 14px;
+      color: var(--muted);
+      font-size: 14px;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+    }
+    nav a:hover, nav a.active {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.09);
+      border-color: var(--line);
+    }
+
+    .side-note {
+      margin-top: 22px;
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(249, 115, 22, 0.12);
+      border: 1px solid rgba(249, 115, 22, 0.28);
+      color: #fed7aa;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    main {
+      padding: 34px clamp(18px, 4vw, 56px) 80px;
+      max-width: 1320px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .hero {
+      min-height: 340px;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 28px;
+      align-items: center;
+      padding: 28px;
+      border: 1px solid var(--line);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.05));
+      border-radius: 32px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 420px;
+      height: 420px;
+      border-radius: 50%;
+      right: -120px;
+      top: -160px;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.25), transparent 65%);
+      pointer-events: none;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(249, 115, 22, 0.16);
+      color: #fed7aa;
+      border: 1px solid rgba(249, 115, 22, 0.28);
+      font-size: 13px;
+      margin-bottom: 14px;
+    }
+
+    h2 {
+      font-size: clamp(30px, 5vw, 62px);
+      line-height: 1.05;
+      margin: 0 0 18px;
+      letter-spacing: -0.055em;
+    }
+    .hero p {
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 16px;
+      margin: 0 0 22px;
+      max-width: 700px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 22px;
+    }
+    .mini {
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid var(--line);
+    }
+    .mini strong {
+      display: block;
+      font-size: 22px;
+      margin-bottom: 4px;
+    }
+    .mini span {
+      color: var(--soft);
+      font-size: 12px;
+    }
+
+    .hero-canvas {
+      position: relative;
+      min-height: 260px;
+      border-radius: 26px;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px),
+        rgba(2, 6, 23, 0.42);
+      background-size: 24px 24px;
+      overflow: hidden;
+    }
+
+    .orbit {
+      position: absolute;
+      width: 170px;
+      height: 170px;
+      border: 1px dashed rgba(255,255,255,0.28);
+      border-radius: 50%;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .dot {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--accent);
+      left: calc(50% + 85px);
+      top: calc(50% - 9px);
+      transform-origin: calc(-85px + 9px) 9px;
+      animation: spin 7s linear infinite;
+      box-shadow: 0 0 28px rgba(249,115,22,.8);
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .formula-float {
+      position: absolute;
+      left: 22px;
+      bottom: 22px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(15,23,42,.86);
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 13px;
+    }
+
+    section.module {
+      margin-top: 28px;
+      padding: 26px;
+      border-radius: 30px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: 0 18px 46px rgba(0,0,0,0.22);
+    }
+
+    .module-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+    .module h3 {
+      margin: 0 0 8px;
+      font-size: clamp(24px, 3vw, 36px);
+      letter-spacing: -0.035em;
+    }
+    .tag {
+      display: inline-flex;
+      padding: 6px 10px;
+      border-radius: 999px;
+      color: #bae6fd;
+      background: rgba(56,189,248,0.12);
+      border: 1px solid rgba(56,189,248,0.28);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .desc {
+      color: var(--muted);
+      line-height: 1.8;
+      margin: 0;
+      max-width: 860px;
+    }
+
+    .formula {
+      margin: 18px 0;
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid var(--line);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      color: #e0f2fe;
+      overflow-x: auto;
+    }
+
+    .lesson-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.15fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .explain, .interactive {
+      border-radius: 22px;
+      background: rgba(255,255,255,0.065);
+      border: 1px solid var(--line);
+      padding: 18px;
+    }
+
+    .explain h4, .interactive h4 {
+      margin: 0 0 12px;
+      font-size: 16px;
+    }
+
+    .explain ul {
+      padding-left: 18px;
+      margin: 10px 0 0;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    .controls {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    label.ctrl {
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: space-between;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    select, button {
+      appearance: none;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.1);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font: inherit;
+    }
+    button {
+      cursor: pointer;
+      background: linear-gradient(135deg, rgba(249,115,22,.9), rgba(251,146,60,.8));
+      border: 0;
+      font-weight: 700;
+    }
+
+    canvas {
+      width: 100%;
+      height: 300px;
+      display: block;
+      border-radius: 18px;
+      background: rgba(2,6,23,0.55);
+      border: 1px solid rgba(255,255,255,0.11);
+    }
+
+    .output {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 16px;
+      background: rgba(15,23,42,0.64);
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .kpi {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .kpi div {
+      padding: 12px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid var(--line);
+    }
+    .kpi strong {
+      display: block;
+      font-size: 19px;
+      color: var(--text);
+    }
+    .kpi span {
+      font-size: 12px;
+      color: var(--soft);
+    }
+
+    .drag-hint {
+      color: #fed7aa;
+      font-size: 12px;
+      margin-top: 8px;
+    }
+
+    .quiz {
+      margin-top: 14px;
+      border-top: 1px solid var(--line);
+      padding-top: 14px;
+    }
+    .quiz p {
+      color: var(--muted);
+      margin: 0 0 10px;
+    }
+
+    .quiz button {
+      margin: 4px 6px 4px 0;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid var(--line);
+      font-weight: 500;
+    }
+    .quiz button.correct {
+      background: rgba(34,197,94,.22);
+      border-color: rgba(34,197,94,.45);
+    }
+    .quiz button.wrong {
+      background: rgba(251,113,133,.22);
+      border-color: rgba(251,113,133,.45);
+    }
+
+    .footer {
+      margin-top: 32px;
+      padding: 24px;
+      border-radius: 28px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid var(--line);
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    @media (max-width: 980px) {
+      .app { grid-template-columns: 1fr; }
+      aside {
+        position: relative;
+        height: auto;
+      }
+      nav {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .hero, .lesson-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 620px) {
+      main { padding: 18px 12px 50px; }
+      .hero, section.module { padding: 18px; border-radius: 24px; }
+      nav { grid-template-columns: 1fr; }
+      .hero-grid, .kpi { grid-template-columns: 1fr; }
+      .module-head { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside>
+      <div class="brand">
+        <div class="logo">∑</div>
+        <div>
+          <h1>MathVision</h1>
+          <p>可交互高等数学教程</p>
+        </div>
+      </div>
+      <nav id="nav">
+        <a href="#laplace">01 拉普拉斯变换</a>
+        <a href="#fourier">02 傅里叶变换</a>
+        <a href="#lagrange">03 拉格朗日插值</a>
+        <a href="#poisson">04 泊松分布</a>
+        <a href="#normal">05 正态分布</a>
+        <a href="#bayes">06 贝叶斯</a>
+        <a href="#euler">07 欧拉公式</a>
+        <a href="#taylor">08 泰勒展开</a>
+        <a href="#svd">09 奇异值分解</a>
+      </nav>
+      <div class="side-note">
+        学习方式：先拖动参数，再看公式含义，最后连接真实应用。不要先背公式。
+      </div>
+    </aside>
+
+    <main>
+      <div class="hero">
+        <div>
+          <div class="pill">互动课原型 · 单文件 HTML</div>
+          <h2>把抽象公式变成可以拖动的实验</h2>
+          <p>
+            这是一套面向 AI、信号处理、工程控制、数据科学学习者的数学交互课。
+            每个模块都包含公式、直觉解释、应用场景和一个可操作的小实验。
+          </p>
+          <div class="hero-grid">
+            <div class="mini"><strong>9</strong><span>核心公式模块</span></div>
+            <div class="mini"><strong>12+</strong><span>滑块 / 按钮 / 拖拽交互</span></div>
+            <div class="mini"><strong>0</strong><span>复杂框架依赖</span></div>
+          </div>
+        </div>
+        <div class="hero-canvas">
+          <div class="orbit"></div>
+          <div class="dot"></div>
+          <div class="formula-float">e^{iθ} = cosθ + i sinθ</div>
+        </div>
+      </div>
+
+      <section class="module" id="laplace">
+        <div class="module-head">
+          <div>
+            <h3>01 拉普拉斯变换</h3>
+            <p class="desc">把时间变化中的微分问题，转换成 s 域里的代数问题。适合电路、控制系统、微分方程和机械振动。</p>
+          </div>
+          <span class="tag">时域 → s 域</span>
+        </div>
+        <div class="formula">L{f(t)} = F(s) = ∫₀∞ f(t)e^(-st) dt</div>
+        <div class="lesson-grid">
+          <div class="explain">
+            <h4>直觉</h4>
+            <ul>
+              <li>输入：一个随时间变化的函数 f(t)。</li>
+              <li>输出：一个关于 s 的函数 F(s)。</li>
+              <li>意义：把“求导、积分、响应”变成更容易处理的代数结构。</li>
+              <li>例子：f(t)=e^(-at) 时，F(s)=1/(s+a)。</li>
+            </ul>
+            <div class="quiz" data-answer="b">
+              <p>小练习：拉普拉斯变换最常用于哪类问题？</p>
+              <button data-choice="a">图像上色</button>
+              <button data-choice="b">微分方程和系统响应</button>
+              <button data-choice="c">文字翻译</button>
+            </div>
+          </div>
+          <div class="interactive">
+            <h4>交互：指数衰减与拉普拉斯结果</h4>
+            <div class="controls">
+              <label class="ctrl">衰减参数 a：<span id="laplaceAVal">1.00</span><input id="laplaceA" type="range" min="0.2" max="5" step="0.05" value="1"></label>
+              <label class="ctrl">s 的实部：<span id="laplaceSVal">1.00</span><input id="laplaceS" type="range" min="0.1" max="6" step="0.05" value="1"></label>
+            </div>
+            <canvas id="laplaceCanvas"></canvas>
+            <div class="output" id="laplaceOut"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="module" id="fourier">
+        <div class="module-head">
+          <div>
+            <h3>02 傅里叶变换</h3>
+            <p class="desc">把复杂波形拆成不同频率的正弦波。适合音频、图像、通信、医学影像和语音识别。</p>
+          </div>
+          <span class="tag">信号 → 频率</span>
+        </div>
+        <div class="formula">F(ω) = ∫₋∞∞ f(t)e^(-iωt) dt</div>
+        <div class="lesson-grid">
+          <div class="explain">
+            <h4>直觉</h4>
+            <ul>
+              <li>任何复杂信号都可以看成很多正弦波叠加。</li>
+              <li>频谱图表示“哪些频率更强”。</li>
+              <li>低频保留轮廓，高频保留细节。</li>
+              <li>声音、图片、视频压缩都离不开频域思想。</li>
+            </ul>
+            <div class="quiz" data-answer="c">
+              <p>小练习：傅里叶变换主要回答什么问题？</p>
+              <button data-choice="a">这个数有多大</button>
+              <button data-choice="b">这个图有几个点</button>
+              <button data-choice="c">信号里有哪些频率</button>
+            </div>
+          </div>
+          <div class="interactive">
+            <h4>交互：拖动频率强度，合成波形</h4>
+            <div class="controls">
+              <label class="ctrl">频率 1 振幅：<span id="fAmp1Val">1.00</span><input id="fAmp1" type="range" min="0" max="2" step="0.05" value="1"></label>
+              <label class="ctrl">频率 3 振幅：<span id="fAmp3Val">0.50</span><input id="fAmp3" type="range" min="0" max="2" step="0.05" value="0.5"></label>
+              <label class="ctrl">频率 8 振幅：<span id="fAmp8Val">0.20</span><input id="fAmp8" type="range" min="0" max="2" step="0.05" value="0.2"></label>
+            </div>
+            <canvas id="fourierCanvas"></canvas>
+            <div class="output">上方是合成波，下方柱状图是简化频谱。调整某个频率的振幅，原始波形会立刻改变。</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="module" id="lagrange">
+        <div class="module-head">
+          <div>
+            <h3>03 拉格朗日插值</h3>
+            <p class="desc">已知几个点，构造一条刚好穿过所有点的多项式曲线。适合数值计算、动画关键帧和缺失数据补全。</p>
+          </div>
+          <span class="tag">点 → 曲线</span>
+        </div>
+        <div class="formula">P(x)=Σ yᵢ Lᵢ(x),  Lᵢ(x)=Πⱼ≠ᵢ (x-xⱼ)/(xᵢ-xⱼ)</div>
+        <div class="lesson-grid">
+          <div class="explain">
+            <h4>直觉</h4>
+            <ul>
+              <li>每个点都有一个“影响函数”。</li>
+              <li>所有影响函数加起来，曲线会穿过每个给定点。</li>
+              <li>点越多不一定越好，高阶插值可能震荡。</li>
+              <li>不要把插值误解为预测未来。</li>
+            </ul>
+            <div class="quiz" data-answer="a">
+              <p>小练习：拉格朗日插值的目标是？</p>
+              <button data-choice="a">构造穿过已知点的曲线</button>
+              <button data-choice="b">把声音变成频谱</button>
+              <button data-choice="c">计算患病概率</button>
+            </div>
+          </div>
+          <div class="interactive">
+            <h4>交互：拖拽点生成插值曲线</h4>
+            <canvas id="lagrangeCanvas"></canvas>
+            <div class="drag-hint">提示：拖动橙色点。点太多或位置极端时，曲线会明显震荡。</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="module" id="poisson">
+        <div class="module-head">
+          <div>
+            <h3>04 泊松分布</h3>
+            <p class="desc">描述固定时间或空间内，某个随机事件发生 k 次的概率。适合请求量、工单、交通流、故障次数。</p>
+          </div>
+          <span class="tag">次数分布</span>
+        </div>
+        <div class="formula">P(X=k)=λᵏe^(-λ)/k!</div>
+        <div class="lesson-grid">
+          <div class="explain">
+            <h4>直觉</h4>
+            <ul>
+              <li>λ 是平均发生次数。</li>
+              <li>k 是实际发生次数。</li>
+              <li>λ 越大，分布越往右移动，也越来越像正态分布。</li>
+              <li>常用于服务器每分钟请求数、客服每小时工单数。</li>
+            </ul>
+            <div class="quiz" data-answer="b">
+              <p>小练习：λ=5 大概表示什么？</p>
+              <button data-choice="a">最多发生 5 次</button>
+              <button data-choice="b">平均发生 5 次</button>
+              <button data-choice="c">一定发生 5 次</button>
+            </div>
+          </div>
+          <div class="interactive">
+            <h4>交互：调整 λ 看概率柱状图</h4>
+            <div class="controls">
+              <label class="ctrl">λ 平均次数：<span id="poisLambdaVal">3.0</span><input id="poisLambda" type="range" min="0.5" max="12" step="0.1" value="3"></label>
+            </div>
+            <canvas id="poissonCanvas"></canvas>
+            <div class="output" id="poissonOut"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="module" id="normal">
+        <div class="module-head">
+          <div>
+            <h3>05 正态分布</h3>
+            <p class="desc">大量独立小因素叠加后，经常形成钟形曲线。适合误差、身高、成绩、工业质检和统计推断。</p>
+          </div>
+          <span class="tag">钟形曲线</span>
+        </div>
+        <div class="formula">f(x)=1/(σ√(2π)) · e^(-(x-μ)²/(2σ²))</div>
+        <div class="lesson-grid">
+          <div class="explain">
+            <h4>直觉</h4>
+            <ul>
+              <li>μ 决定中心位置。</li>
+              <li>σ 决定曲线胖瘦。</li>
+              <li>约 68% 数据落在 μ±1σ 内。</li>
+              <li>约 95% 数据落在 μ±2σ 内。</li>
+            </ul>
+            <div class="quiz" data-answer="c">
+              <p>小练习：标准差 σ 变大时，曲线会怎样？</p>
+              <button data-choice="a">整体右移</button>
+              <button data-choice="b">整体左移</button>
+              <button data-choice="c">变矮变宽</button>
+            </div>
+          </div>
+          <div class="interactive">
+            <h4>交互：调整均值和标准差</h4>
+            <div class="controls">
+              <label class="ctrl">均值 μ：<span id="normalMuVal">0.0</span><input id="normalMu" type="range" min="-3" max="3" step="0.1" value="0"></label>
+              <label class="ctrl">标准差 σ：<span id="normalSigmaVal">1.0</span><input id="normalSigma" type="range" min="0.4" max="2.5" step="0.1" value="1"></label>
+            </div>
+            <canvas id="normalCanvas"></canvas>
+            <div class="output" id="normalOut"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="module" id="bayes">
+        <div class="module-head">
+          <div>
+            <h3>06 贝叶斯</h3>
+            <p class="desc">看到新证据后，理性更新概率。适合医学检测、垃圾邮件识别、推荐系统、风控和 AI 推理。</p>
+          </div>
+          <span class="tag">先验 → 后验</span>
+        </div>
+        <div class="formula">P(A|B)=P(B|A)P(A)/P(B)</div>
+        <div class="lesson-grid">
+          <div class="explain">
+            <h4>直觉</h4>
+            <ul>
+              <li>先验：看到证据前，你原本相信多少。</li>
+              <li>似然：如果事情是真的，证据出现的概率。</li>
+              <li>后验：看到证据后，新的判断。</li>
+              <li>关键误区：检测阳性不等于一定患病。</li>
+            </ul>
+            <div class="quiz" data-answer="a">
+              <p>小练习：贝叶斯最容易被忽略的是？</p>
+              <button data-choice="a">先验概率</button>
+              <button data-choice="b">加法口诀</button>
+              <button data-choice="c">几何面积</button>
+            </div>
+          </div>
+          <div class="interactive">
+            <h4>交互：医学检测中的后验概率</h4>
+            <div class="controls">
+              <label class="ctrl">患病率 P(A)：<span id="bayesPriorVal">1%</span><input id="bayesPrior" type="range" min="0.1" max="30" step="0.1" value="1"></label>
+              <label class="ctrl">真阳性率 P(+|A)：<span id="bayesTPRVal">95%</span><input id="bayesTPR" type="range" min="50" max="100" step="1" value="95"></label>
+              <label class="ctrl">假阳性率 P(+|¬A)：<span id="bayesFPRVal">5%</span><input id="bayesFPR" type="range" min="0.1" max="30" step="0.1" value="5"></label>
+            </div>
+            <canvas id="bayesCanvas"></canvas>
+            <div class="output" id="bayesOut"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="module" id="euler">
+        <div class="module-head">
+          <div>
+            <h3>07 欧拉公式</h3>
+            <p class="desc">连接指数函数、三角函数和复数。它说明复指数本质上是在复平面上旋转。</p>
+          </div>
+          <span class="tag">复指数 = 旋转</span>
+        </div>
+        <div class="formula">e^(iθ)=cosθ+i sinθ</div>
+        <div class="lesson-grid">
+          <div class="explain">
+            <h4>直觉</h4>
+            <ul>
+              <li>cosθ 是横坐标。</li>
+              <li>sinθ 是纵坐标。</li>
+              <li>e^(iθ) 是单位圆上的一个旋转点。</li>
+              <li>当 θ=π 时，e^(iπ)+1=0。</li>
+            </ul>
+            <div class="quiz" data-answer="b">
+              <p>小练习：乘以 i 可以理解为？</p>
+              <button data-choice="a">放大 2 倍</button>
+              <button data-choice="b">旋转 90 度</button>
+              <button data-choice="c">变成负数</button>
+            </div>
+          </div>
+          <div class="interactive">
+            <h4>交互：拖动角度，看单位圆上的复数</h4>
+            <div class="controls">
+              <label class="ctrl">角度 θ：<span id="eulerThetaVal">45°</span><input id="eulerTheta" type="range" min="0" max="360" step="1" value="45"></label>
+            </div>
+            <canvas id="eulerCanvas"></canvas>
+            <div class="output" id="eulerOut"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="module" id="taylor">
+        <div class="module-head">
+          <div>
+            <h3>08 泰勒展开</h3>
+            <p class="desc">用多项式在某个点附近逼近复杂函数。适合计算器、物理近似、数值计算和优化算法。</p>
+          </div>
+          <span class="tag">复杂函数 → 多项式</span>
+        </div>
+        <div class="formula">f(x)=f(a)+f'(a)(x-a)+f''(a)(x-a)²/2!+...</div>
+        <div class="lesson-grid">
+          <div class="explain">
+            <h4>直觉</h4>
+            <ul>
+              <li>0 阶：只知道函数值。</li>
+              <li>1 阶：加入斜率。</li>
+              <li>2 阶：加入弯曲程度。</li>
+              <li>阶数越高，展开点附近越准。</li>
+            </ul>
+            <div class="quiz" data-answer="c">
+              <p>小练习：泰勒展开通常在哪里最准确？</p>
+              <button data-choice="a">离展开点越远越准</button>
+              <button data-choice="b">任何地方都一样准</button>
+              <button data-choice="c">展开点附近最准</button>
+            </div>
+          </div>
+          <div class="interactive">
+            <h4>交互：调整阶数逼近 eˣ</h4>
+            <div class="controls">
+              <label class="ctrl">泰勒阶数 n：<span id="taylorNVal">3</span><input id="taylorN" type="range" min="0" max="8" step="1" value="3"></label>
+            </div>
+            <canvas id="taylorCanvas"></canvas>
+            <div class="output" id="taylorOut"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="module" id="svd">
+        <div class="module-head">
+          <div>
+            <h3>09 奇异值分解 SVD</h3>
+            <p class="desc">把矩阵拆成两个方向变换和一个缩放矩阵。适合图像压缩、推荐系统、降维、去噪和语义分析。</p>
+          </div>
+          <span class="tag">矩阵 → 主要方向</span>
+        </div>
+        <div class="formula">A = UΣVᵀ，Aₖ = Σᵢ₌₁ᵏ σᵢ uᵢvᵢᵀ</div>
+        <div class="lesson-grid">
+          <div class="explain">
+            <h4>直觉</h4>
+            <ul>
+              <li>Vᵀ：先改变输入方向。</li>
+              <li>Σ：按重要程度缩放。</li>
+              <li>U：再改变输出方向。</li>
+              <li>奇异值越大，代表这个方向越重要。</li>
+            </ul>
+            <div class="quiz" data-answer="a">
+              <p>小练习：图像压缩时通常保留什么？</p>
+              <button data-choice="a">最大的几个奇异值</button>
+              <button data-choice="b">最小的几个奇异值</button>
+              <button data-choice="c">随机几个像素</button>
+            </div>
+          </div>
+          <div class="interactive">
+            <h4>交互：保留更多“重要方向”，图像更清晰</h4>
+            <div class="controls">
+              <label class="ctrl">保留方向数量 k：<span id="svdKVal">6</span><input id="svdK" type="range" min="1" max="20" step="1" value="6"></label>
+            </div>
+            <canvas id="svdCanvas"></canvas>
+            <div class="output" id="svdOut"></div>
+          </div>
+        </div>
+      </section>
+
+      <div class="footer">
+        <strong>下一步产品化建议：</strong>
+        这份原型可以继续拆成 Next.js 组件：FormulaCard、ConceptPanel、CanvasLab、QuizBlock、ProgressTracker。
+        如果要做完整课程，建议每个模块再增加“推导动画”“真实案例任务”和“AI 生成练习题”。
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const $ = id => document.getElementById(id);
+    const DPR = window.devicePixelRatio || 1;
+
+    function setupCanvas(canvas) {
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * DPR;
+      canvas.height = rect.height * DPR;
+      const ctx = canvas.getContext('2d');
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+      return { ctx, w: rect.width, h: rect.height };
+    }
+
+    function clear(ctx, w, h) {
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = 'rgba(2,6,23,0.6)';
+      ctx.fillRect(0, 0, w, h);
+    }
+
+    function grid(ctx, w, h, x0=w/2, y0=h/2, step=40) {
+      ctx.strokeStyle = 'rgba(255,255,255,0.07)';
+      ctx.lineWidth = 1;
+      for (let x = x0 % step; x < w; x += step) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+      }
+      for (let y = y0 % step; y < h; y += step) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+      }
+      ctx.strokeStyle = 'rgba(255,255,255,0.28)';
+      ctx.beginPath(); ctx.moveTo(0, y0); ctx.lineTo(w, y0); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x0, 0); ctx.lineTo(x0, h); ctx.stroke();
+    }
+
+    function drawLine(ctx, points, color='#f97316', width=2) {
+      ctx.strokeStyle = color;
+      ctx.lineWidth = width;
+      ctx.beginPath();
+      points.forEach((p, i) => i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y));
+      ctx.stroke();
+    }
+
+    function factorial(n) {
+      let r = 1;
+      for (let i = 2; i <= n; i++) r *= i;
+      return r;
+    }
+
+    function poisson(k, lambda) {
+      return Math.pow(lambda, k) * Math.exp(-lambda) / factorial(k);
+    }
+
+    function normalPdf(x, mu, sigma) {
+      return Math.exp(-Math.pow(x - mu, 2) / (2 * sigma * sigma)) / (sigma * Math.sqrt(2 * Math.PI));
+    }
+
+    function taylorExp(x, n) {
+      let sum = 0;
+      for (let i = 0; i <= n; i++) sum += Math.pow(x, i) / factorial(i);
+      return sum;
+    }
+
+    function drawLaplace() {
+      const {ctx,w,h} = setupCanvas($('laplaceCanvas'));
+      clear(ctx,w,h); grid(ctx,w,h,50,h-45,40);
+      const a = parseFloat($('laplaceA').value);
+      const s = parseFloat($('laplaceS').value);
+      $('laplaceAVal').textContent = a.toFixed(2);
+      $('laplaceSVal').textContent = s.toFixed(2);
+
+      let fPoints = [], weightPoints = [];
+      for (let i=0; i<=240; i++) {
+        const t = i / 38;
+        const x = 50 + i * (w-80)/240;
+        const y1 = h - 45 - Math.exp(-a*t) * (h-85);
+        const y2 = h - 45 - Math.exp(-s*t) * (h-85);
+        fPoints.push({x,y:y1});
+        weightPoints.push({x,y:y2});
+      }
+      drawLine(ctx, fPoints, '#f97316', 3);
+      drawLine(ctx, weightPoints, '#38bdf8', 2);
+
+      ctx.fillStyle = '#f97316'; ctx.fillText('f(t)=e^{-at}', 22, 24);
+      ctx.fillStyle = '#38bdf8'; ctx.fillText('权重 e^{-st}', 22, 44);
+
+      const F = 1 / (s + a);
+      $('laplaceOut').innerHTML = `当前：f(t)=e<sup>-${a.toFixed(2)}t</sup>，s=${s.toFixed(2)}，所以 F(s)=1/(s+a)=<strong>${F.toFixed(4)}</strong>。a 越大，时域衰减越快；s 越大，远处时间贡献越小。`;
+    }
+
+    function drawFourier() {
+      const {ctx,w,h} = setupCanvas($('fourierCanvas'));
+      clear(ctx,w,h);
+      const a1 = parseFloat($('fAmp1').value);
+      const a3 = parseFloat($('fAmp3').value);
+      const a8 = parseFloat($('fAmp8').value);
+      $('fAmp1Val').textContent = a1.toFixed(2);
+      $('fAmp3Val').textContent = a3.toFixed(2);
+      $('fAmp8Val').textContent = a8.toFixed(2);
+
+      const mid = h * 0.34;
+      grid(ctx,w,h,30,mid,40);
+      const points = [];
+      const maxAmp = Math.max(1, a1+a3+a8);
+      for (let i=0; i<w; i++) {
+        const t = i / w * Math.PI * 4;
+        const y = a1*Math.sin(t) + a3*Math.sin(3*t) + a8*Math.sin(8*t);
+        points.push({x:i,y:mid - y * 52 / maxAmp});
+      }
+      drawLine(ctx, points, '#f97316', 3);
+
+      const baseY = h - 35;
+      const bars = [
+        {f:1,a:a1,c:'#f97316'},
+        {f:3,a:a3,c:'#38bdf8'},
+        {f:8,a:a8,c:'#a78bfa'}
+      ];
+      bars.forEach((b, idx) => {
+        const bw = 58;
+        const x = 90 + idx * 100;
+        const bh = b.a / 2 * 120;
+        ctx.fillStyle = b.c;
+        ctx.fillRect(x, baseY-bh, bw, bh);
+        ctx.fillStyle = '#cbd5e1';
+        ctx.fillText('频率 '+b.f, x+6, baseY+18);
+      });
+      ctx.fillStyle = '#cbd5e1';
+      ctx.fillText('上：合成波形，下：频谱强度', 18, 22);
+    }
+
+    const lagrangeState = {
+      points: [
+        {x:80,y:220}, {x:180,y:90}, {x:300,y:180}, {x:420,y:80}, {x:560,y:210}
+      ],
+      drag: null
+    };
+
+    function lagrangeValue(x, pts) {
+      let y = 0;
+      for (let i=0; i<pts.length; i++) {
+        let li = 1;
+        for (let j=0; j<pts.length; j++) {
+          if (i !== j) li *= (x - pts[j].x) / (pts[i].x - pts[j].x);
+        }
+        y += pts[i].y * li;
+      }
+      return y;
+    }
+
+    function drawLagrange() {
+      const canvas = $('lagrangeCanvas');
+      const {ctx,w,h} = setupCanvas(canvas);
+      if (!canvas._init) {
+        canvas._init = true;
+        function getPos(e) {
+          const rect = canvas.getBoundingClientRect();
+          const touch = e.touches ? e.touches[0] : e;
+          return {x: touch.clientX - rect.left, y: touch.clientY - rect.top};
+        }
+        canvas.addEventListener('mousedown', e => {
+          const p = getPos(e);
+          lagrangeState.drag = lagrangeState.points.findIndex(pt => Math.hypot(pt.x-p.x, pt.y-p.y)<15);
+        });
+        canvas.addEventListener('mousemove', e => {
+          if (lagrangeState.drag !== null && lagrangeState.drag >= 0) {
+            const p = getPos(e);
+            lagrangeState.points[lagrangeState.drag] = {x: Math.max(20,Math.min(w-20,p.x)), y: Math.max(20,Math.min(h-20,p.y))};
+            drawLagrange();
+          }
+        });
+        window.addEventListener('mouseup', () => lagrangeState.drag = null);
+        canvas.addEventListener('touchstart', e => {
+          const p = getPos(e);
+          lagrangeState.drag = lagrangeState.points.findIndex(pt => Math.hypot(pt.x-p.x, pt.y-p.y)<20);
+        }, {passive:true});
+        canvas.addEventListener('touchmove', e => {
+          if (lagrangeState.drag !== null && lagrangeState.drag >= 0) {
+            const p = getPos(e);
+            lagrangeState.points[lagrangeState.drag] = {x: Math.max(20,Math.min(w-20,p.x)), y: Math.max(20,Math.min(h-20,p.y))};
+            drawLagrange();
+          }
+        }, {passive:true});
+        canvas.addEventListener('touchend', () => lagrangeState.drag = null);
+      }
+
+      clear(ctx,w,h); grid(ctx,w,h,30,h-30,40);
+      const pts = lagrangeState.points.map(p => ({x: Math.min(p.x, w-20), y:p.y}));
+      const curve = [];
+      for (let x=20; x<w-20; x+=2) {
+        const y = lagrangeValue(x, pts);
+        if (Number.isFinite(y) && y > -500 && y < h+500) curve.push({x,y});
+      }
+      drawLine(ctx, curve, '#38bdf8', 3);
+      pts.forEach((p,i) => {
+        ctx.fillStyle = '#f97316';
+        ctx.beginPath(); ctx.arc(p.x,p.y,8,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle = '#fff7ed';
+        ctx.fillText('P'+i, p.x+10, p.y-10);
+      });
+    }
+
+    function drawPoisson() {
+      const {ctx,w,h} = setupCanvas($('poissonCanvas'));
+      clear(ctx,w,h);
+      const lambda = parseFloat($('poisLambda').value);
+      $('poisLambdaVal').textContent = lambda.toFixed(1);
+
+      const maxK = 18;
+      const probs = [];
+      for (let k=0; k<=maxK; k++) probs.push(poisson(k, lambda));
+      const maxP = Math.max(...probs);
+      const margin = 36;
+      const bw = (w - margin*2) / (maxK+1) * 0.68;
+      probs.forEach((p,k) => {
+        const x = margin + k * ((w - margin*2)/(maxK+1));
+        const bh = p / maxP * (h-75);
+        ctx.fillStyle = k === Math.round(lambda) ? '#f97316' : '#38bdf8';
+        ctx.fillRect(x, h-35-bh, bw, bh);
+        ctx.fillStyle = '#cbd5e1';
+        if (k % 2 === 0) ctx.fillText(k, x+4, h-13);
+      });
+      const mode = Math.floor(lambda);
+      $('poissonOut').innerHTML = `当前 λ=${lambda.toFixed(1)}。最可能出现的次数通常在 <strong>${mode}</strong> 附近。P(X=${mode})≈<strong>${poisson(mode,lambda).toFixed(3)}</strong>。`;
+    }
+
+    function drawNormal() {
+      const {ctx,w,h} = setupCanvas($('normalCanvas'));
+      clear(ctx,w,h); grid(ctx,w,h,w/2,h-45,40);
+      const mu = parseFloat($('normalMu').value);
+      const sigma = parseFloat($('normalSigma').value);
+      $('normalMuVal').textContent = mu.toFixed(1);
+      $('normalSigmaVal').textContent = sigma.toFixed(1);
+
+      const points = [];
+      for (let i=0; i<w; i++) {
+        const xVal = -5 + 10 * i / w;
+        const p = normalPdf(xVal, mu, sigma);
+        const y = h - 45 - p * 360;
+        points.push({x:i,y});
+      }
+      drawLine(ctx, points, '#f97316', 3);
+
+      function xScreen(v) { return (v + 5) / 10 * w; }
+      ctx.strokeStyle = 'rgba(34,197,94,.8)';
+      ctx.lineWidth = 2;
+      [mu-sigma, mu, mu+sigma].forEach(v => {
+        const x = xScreen(v);
+        ctx.beginPath(); ctx.moveTo(x, 22); ctx.lineTo(x, h-35); ctx.stroke();
+      });
+      ctx.fillStyle = '#cbd5e1';
+      ctx.fillText('绿色线：μ-σ，μ，μ+σ', 16, 24);
+      $('normalOut').innerHTML = `当前 μ=${mu.toFixed(1)}，σ=${sigma.toFixed(1)}。大约 68% 的数据会落在 <strong>${(mu-sigma).toFixed(1)} 到 ${(mu+sigma).toFixed(1)}</strong> 之间。`;
+    }
+
+    function drawBayes() {
+      const {ctx,w,h} = setupCanvas($('bayesCanvas'));
+      clear(ctx,w,h);
+      const prior = parseFloat($('bayesPrior').value)/100;
+      const tpr = parseFloat($('bayesTPR').value)/100;
+      const fpr = parseFloat($('bayesFPR').value)/100;
+      $('bayesPriorVal').textContent = (prior*100).toFixed(1)+'%';
+      $('bayesTPRVal').textContent = (tpr*100).toFixed(0)+'%';
+      $('bayesFPRVal').textContent = (fpr*100).toFixed(1)+'%';
+
+      const positive = tpr*prior + fpr*(1-prior);
+      const posterior = tpr*prior / positive;
+
+      const bars = [
+        {name:'先验患病率', val:prior, color:'#38bdf8'},
+        {name:'检测阳性率', val:positive, color:'#a78bfa'},
+        {name:'阳性后患病率', val:posterior, color:'#f97316'}
+      ];
+      bars.forEach((b,i) => {
+        const x = 42 + i*(w-84)/3;
+        const bw = (w-110)/3;
+        const bh = Math.max(3, b.val * (h-75));
+        ctx.fillStyle = b.color;
+        ctx.fillRect(x, h-36-bh, bw, bh);
+        ctx.fillStyle = '#cbd5e1';
+        ctx.fillText(b.name, x, h-14);
+        ctx.fillStyle = '#f8fafc';
+        ctx.fillText((b.val*100).toFixed(1)+'%', x, h-44-bh);
+      });
+
+      $('bayesOut').innerHTML = `阳性后真正患病概率 P(A|+)≈<strong>${(posterior*100).toFixed(2)}%</strong>。当基础患病率很低时，即使检测较准，后验概率也可能没有直觉想象中高。`;
+    }
+
+    function drawEuler() {
+      const {ctx,w,h} = setupCanvas($('eulerCanvas'));
+      clear(ctx,w,h); grid(ctx,w,h,w/2,h/2,40);
+      const thetaDeg = parseFloat($('eulerTheta').value);
+      const theta = thetaDeg * Math.PI / 180;
+      $('eulerThetaVal').textContent = thetaDeg.toFixed(0)+'°';
+      const r = Math.min(w,h)*0.32;
+      const cx = w/2, cy = h/2;
+      const x = cx + r * Math.cos(theta);
+      const y = cy - r * Math.sin(theta);
+
+      ctx.strokeStyle = 'rgba(255,255,255,.32)';
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.stroke();
+
+      ctx.strokeStyle = '#f97316';
+      ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(x,y); ctx.stroke();
+
+      ctx.fillStyle = '#f97316';
+      ctx.beginPath(); ctx.arc(x,y,8,0,Math.PI*2); ctx.fill();
+
+      ctx.strokeStyle = '#38bdf8';
+      ctx.setLineDash([5,5]);
+      ctx.beginPath(); ctx.moveTo(x,cy); ctx.lineTo(x,y); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(x,cy); ctx.stroke();
+      ctx.setLineDash([]);
+
+      const c = Math.cos(theta), s = Math.sin(theta);
+      $('eulerOut').innerHTML = `e<sup>iθ</sup> = cosθ + i sinθ = <strong>${c.toFixed(3)} ${s>=0?'+':'-'} ${Math.abs(s).toFixed(3)}i</strong>。`;
+    }
+
+    function drawTaylor() {
+      const {ctx,w,h} = setupCanvas($('taylorCanvas'));
+      clear(ctx,w,h); grid(ctx,w,h,w/2,h/2,40);
+      const n = parseInt($('taylorN').value,10);
+      $('taylorNVal').textContent = n;
+      const truePts = [], approxPts = [];
+      const xMin = -3, xMax = 3;
+      function sx(x){ return (x-xMin)/(xMax-xMin)*w; }
+      function sy(y){ return h - 35 - y/20*(h-70); }
+      for (let i=0; i<w; i++) {
+        const x = xMin + (xMax-xMin)*i/w;
+        const y1 = Math.exp(x);
+        const y2 = taylorExp(x,n);
+        if (y1 < 22) truePts.push({x:i,y:sy(y1)});
+        if (y2 > -10 && y2 < 22) approxPts.push({x:i,y:sy(y2)});
+      }
+      drawLine(ctx, truePts, '#38bdf8', 3);
+      drawLine(ctx, approxPts, '#f97316', 3);
+      ctx.fillStyle = '#38bdf8'; ctx.fillText('真实 eˣ', 18, 22);
+      ctx.fillStyle = '#f97316'; ctx.fillText('泰勒近似', 18, 42);
+      const err = Math.abs(Math.exp(1) - taylorExp(1,n));
+      $('taylorOut').innerHTML = `当前用 ${n} 阶多项式近似 eˣ。在 x=1 处，误差约为 <strong>${err.toFixed(5)}</strong>。阶数越高，展开点 0 附近越接近真实函数。`;
+    }
+
+    function drawSVD() {
+      const {ctx,w,h} = setupCanvas($('svdCanvas'));
+      clear(ctx,w,h);
+      const k = parseInt($('svdK').value,10);
+      $('svdKVal').textContent = k;
+
+      const size = 180;
+      const leftX = w*0.28 - size/2;
+      const rightX = w*0.72 - size/2;
+      const y0 = h/2 - size/2;
+
+      function sourceVal(x,y) {
+        const cx = x - 0.5, cy = y - 0.5;
+        const face = Math.exp(-8*(cx*cx+cy*cy));
+        const stripe = 0.25*Math.sin(32*x) + 0.18*Math.sin(46*(x+y));
+        const edge = (Math.abs(cx)<0.18 && Math.abs(cy)<0.35) ? 0.35 : 0;
+        return Math.max(0, Math.min(1, 0.35 + face + stripe + edge));
+      }
+
+      function approxVal(x,y,k) {
+        let v = 0.35;
+        for (let i=1; i<=k; i++) {
+          const amp = 1 / Math.pow(i, 0.9);
+          v += amp * 0.12 * Math.sin((i*1.6+1)*Math.PI*x + i*0.4) * Math.cos((i*1.1+1)*Math.PI*y);
+        }
+        const cx = x - 0.5, cy = y - 0.5;
+        v += Math.min(k/20,1) * Math.exp(-8*(cx*cx+cy*cy))*0.6;
+        return Math.max(0, Math.min(1, v));
+      }
+
+      function drawImage(x0, func, label) {
+        const n = 42;
+        const cell = size/n;
+        for (let i=0;i<n;i++) {
+          for (let j=0;j<n;j++) {
+            const v = func(i/n,j/n);
+            const c = Math.floor(v*255);
+            ctx.fillStyle = `rgb(${c},${c},${c})`;
+            ctx.fillRect(x0+i*cell, y0+j*cell, cell+0.5, cell+0.5);
+          }
+        }
+        ctx.strokeStyle = 'rgba(255,255,255,.28)';
+        ctx.strokeRect(x0,y0,size,size);
+        ctx.fillStyle = '#cbd5e1';
+        ctx.fillText(label, x0, y0+size+24);
+      }
+
+      drawImage(leftX, sourceVal, '原始矩阵 / 图像');
+      drawImage(rightX, (x,y)=>approxVal(x,y,k), '保留 k 个方向后的近似');
+
+      const rate = Math.round(k/20*100);
+      $('svdOut').innerHTML = `当前保留 k=${k} 个主要方向，信息保留感约 <strong>${rate}%</strong>。真实 SVD 中，保留最大的奇异值越多，重建越清晰，但压缩率越低。`;
+    }
+
+    function initQuizzes() {
+      document.querySelectorAll('.quiz').forEach(q => {
+        const answer = q.dataset.answer;
+        q.querySelectorAll('button').forEach(btn => {
+          btn.addEventListener('click', () => {
+            q.querySelectorAll('button').forEach(b => b.classList.remove('correct','wrong'));
+            if (btn.dataset.choice === answer) btn.classList.add('correct');
+            else btn.classList.add('wrong');
+          });
+        });
+      });
+    }
+
+    function bindInputs() {
+      [
+        'laplaceA','laplaceS','fAmp1','fAmp3','fAmp8','poisLambda',
+        'normalMu','normalSigma','bayesPrior','bayesTPR','bayesFPR',
+        'eulerTheta','taylorN','svdK'
+      ].forEach(id => $(id).addEventListener('input', drawAll));
+    }
+
+    function drawAll() {
+      drawLaplace();
+      drawFourier();
+      drawLagrange();
+      drawPoisson();
+      drawNormal();
+      drawBayes();
+      drawEuler();
+      drawTaylor();
+      drawSVD();
+    }
+
+    function navSpy() {
+      const sections = [...document.querySelectorAll('section.module')];
+      const links = [...document.querySelectorAll('nav a')];
+      window.addEventListener('scroll', () => {
+        let current = sections[0].id;
+        sections.forEach(sec => {
+          if (sec.getBoundingClientRect().top < 160) current = sec.id;
+        });
+        links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + current));
+      });
+    }
+
+    window.addEventListener('resize', drawAll);
+    initQuizzes();
+    bindInputs();
+    navSpy();
+    drawAll();
+  </script>
+</body>
+</html>

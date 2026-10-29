@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>梯度下降 · 互动教学</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700;900&family=Noto+Sans+SC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#12110f;
+    --surface:#1b1916;
+    --surface-2:#232019;
+    --border:#34302a;
+    --border-soft:#2a2722;
+    --text:#ece7df;
+    --muted:#9a938a;
+    --faint:#6b655d;
+    --param:#e9e3d8;     /* θ 参数 */
+    --lr:#f0a830;        /* α 学习率 / 路径 */
+    --grad:#41c9b6;      /* ∇J 梯度 */
+    --loss:#7fa9d6;      /* 损失曲线 */
+    --warn:#e8674e;      /* 发散 */
+    --ok:#82bd6f;        /* 收敛 */
+    --r:14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:"Noto Sans SC",system-ui,sans-serif;
+    font-weight:300;
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+    background-image:
+      linear-gradient(rgba(255,255,255,.012) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(255,255,255,.012) 1px,transparent 1px),
+      radial-gradient(900px 500px at 80% -10%,rgba(240,168,48,.06),transparent),
+      radial-gradient(800px 500px at 0% 110%,rgba(65,201,182,.05),transparent);
+    background-size:34px 34px,34px 34px,100% 100%,100% 100%;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:0 22px 90px;}
+
+  /* header */
+  header{padding:54px 0 26px;border-bottom:1px solid var(--border-soft);}
+  .eyebrow{font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:.32em;color:var(--lr);text-transform:uppercase;margin-bottom:14px;}
+  h1{font-family:"Noto Serif SC",serif;font-weight:900;font-size:clamp(34px,6vw,58px);line-height:1.08;margin:0 0 14px;letter-spacing:-.01em;}
+  h1 .en{display:block;font-family:"JetBrains Mono",monospace;font-weight:400;font-size:clamp(13px,1.6vw,16px);letter-spacing:.18em;color:var(--faint);margin-top:10px;}
+  .lede{color:var(--muted);max-width:60ch;font-size:16px;}
+
+  /* tabs */
+  nav.tabs{position:sticky;top:0;z-index:30;display:flex;gap:6px;flex-wrap:wrap;
+    margin:0 -22px;padding:14px 22px;background:rgba(18,17,15,.82);backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--border-soft);}
+  .tab{appearance:none;border:1px solid transparent;background:transparent;color:var(--muted);
+    font-family:"Noto Sans SC",sans-serif;font-size:14px;font-weight:500;cursor:pointer;
+    padding:8px 16px;border-radius:999px;transition:.18s;display:flex;align-items:center;gap:8px;}
+  .tab .n{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--faint);}
+  .tab:hover{color:var(--text);background:var(--surface);}
+  .tab.active{color:var(--bg);background:var(--lr);border-color:var(--lr);font-weight:700;}
+  .tab.active .n{color:rgba(18,17,15,.55);}
+
+  section.page{display:none;animation:fade .4s ease;}
+  section.page.active{display:block;}
+  @keyframes fade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+
+  h2{font-family:"Noto Serif SC",serif;font-weight:700;font-size:clamp(24px,3.6vw,34px);margin:48px 0 4px;letter-spacing:-.01em;}
+  .sub{color:var(--muted);margin:0 0 26px;max-width:64ch;}
+  p{max-width:68ch;}
+  strong{font-weight:700;color:var(--text);}
+
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:24px;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+  @media(max-width:780px){.grid2,.grid4{grid-template-columns:1fr;}}
+
+  /* metaphor mapping */
+  .map-row{display:flex;align-items:center;gap:14px;padding:13px 0;border-bottom:1px dashed var(--border-soft);}
+  .map-row:last-child{border-bottom:none;}
+  .map-real{flex:0 0 42%;font-weight:500;}
+  .map-arrow{color:var(--faint);font-family:"JetBrains Mono",monospace;}
+  .map-math{font-family:"JetBrains Mono",monospace;font-size:15px;}
+  .chip{display:inline-block;padding:2px 9px;border-radius:7px;font-size:13px;font-family:"JetBrains Mono",monospace;font-weight:500;}
+  .chip.p{background:rgba(233,227,216,.1);color:var(--param);}
+  .chip.l{background:rgba(240,168,48,.14);color:var(--lr);}
+  .chip.g{background:rgba(65,201,182,.14);color:var(--grad);}
+  .chip.j{background:rgba(127,169,214,.14);color:var(--loss);}
+
+  /* formula */
+  .formula{font-family:"JetBrains Mono",monospace;text-align:center;font-size:clamp(26px,5vw,46px);
+    padding:38px 16px;line-height:1.5;letter-spacing:.01em;}
+  .f-p{color:var(--param);} .f-l{color:var(--lr);} .f-g{color:var(--grad);} .f-op{color:var(--faint);}
+  .f-piece{position:relative;cursor:help;transition:.2s;border-radius:6px;padding:2px 4px;}
+  .f-piece:hover{background:rgba(255,255,255,.06);}
+  .legend{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:8px;}
+  @media(max-width:680px){.legend{grid-template-columns:1fr;}}
+  .leg{display:flex;gap:13px;align-items:flex-start;padding:15px;background:var(--surface-2);border:1px solid var(--border-soft);border-radius:11px;}
+  .leg .dot{flex:0 0 12px;height:12px;border-radius:50%;margin-top:7px;}
+  .leg b{font-family:"JetBrains Mono",monospace;font-size:16px;}
+  .leg small{display:block;color:var(--muted);font-size:13.5px;margin-top:2px;line-height:1.55;}
+
+  /* playground layout */
+  .lab{display:grid;grid-template-columns:1fr 320px;gap:18px;align-items:start;}
+  @media(max-width:880px){.lab{grid-template-columns:1fr;}}
+  .stage{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;}
+  .canvas-wrap{position:relative;width:100%;}
+  canvas{width:100%;display:block;border-radius:9px;cursor:crosshair;background:#100f0d;}
+  .hint{font-size:12px;color:var(--faint);font-family:"JetBrains Mono",monospace;text-align:center;margin-top:9px;}
+
+  .panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;}
+  .panel h3{font-family:"Noto Sans SC";font-weight:700;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 16px;}
+  .panel h3:not(:first-child){margin-top:24px;}
+
+  .ctl-label{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;margin-bottom:7px;}
+  .ctl-label .v{font-family:"JetBrains Mono",monospace;font-weight:700;}
+  .ctl-label .v.lr{color:var(--lr);}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:5px;border-radius:5px;background:var(--border);outline:none;margin:2px 0 18px;}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--lr);cursor:pointer;border:3px solid var(--bg);box-shadow:0 0 0 1px var(--lr);}
+  input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--lr);cursor:pointer;border:3px solid var(--bg);}
+
+  .seg{display:flex;background:var(--surface-2);border:1px solid var(--border-soft);border-radius:9px;padding:3px;margin-bottom:16px;}
+  .seg button{flex:1;border:none;background:transparent;color:var(--muted);font-family:"Noto Sans SC";font-weight:500;font-size:13px;padding:7px;border-radius:6px;cursor:pointer;transition:.15s;}
+  .seg button.on{background:var(--lr);color:var(--bg);font-weight:700;}
+
+  select{width:100%;background:var(--surface-2);color:var(--text);border:1px solid var(--border);border-radius:9px;padding:10px 12px;font-family:"Noto Sans SC";font-size:14px;margin-bottom:6px;cursor:pointer;}
+  .fdesc{font-size:12.5px;color:var(--muted);line-height:1.5;margin:0 0 16px;min-height:34px;}
+
+  .btn-row{display:flex;gap:8px;}
+  .btn{flex:1;border:1px solid var(--border);background:var(--surface-2);color:var(--text);font-family:"Noto Sans SC";font-weight:500;font-size:14px;padding:11px;border-radius:9px;cursor:pointer;transition:.15s;}
+  .btn:hover{border-color:var(--lr);color:var(--lr);}
+  .btn.primary{background:var(--lr);color:var(--bg);border-color:var(--lr);font-weight:700;flex:1.4;}
+  .btn.primary:hover{filter:brightness(1.08);color:var(--bg);}
+
+  /* readout */
+  .read{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border-soft);border:1px solid var(--border-soft);border-radius:10px;overflow:hidden;margin-bottom:16px;}
+  .read .cell{background:var(--surface-2);padding:11px 13px;}
+  .read .k{font-size:11px;color:var(--faint);font-family:"JetBrains Mono",monospace;letter-spacing:.05em;}
+  .read .val{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:18px;margin-top:2px;}
+  .read .val.lr{color:var(--lr);} .read .val.g{color:var(--grad);} .read .val.j{color:var(--loss);}
+
+  .calc{font-family:"JetBrains Mono",monospace;font-size:13px;background:#100f0d;border:1px solid var(--border-soft);border-radius:10px;padding:14px;line-height:1.85;word-break:break-word;}
+  .calc .lbl{color:var(--faint);font-size:11px;display:block;margin-bottom:5px;}
+  .status{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:500;padding:5px 11px;border-radius:999px;margin-top:14px;}
+  .status .led{width:8px;height:8px;border-radius:50%;}
+  .status.running{background:rgba(240,168,48,.12);color:var(--lr);} .status.running .led{background:var(--lr);animation:blink 1s infinite;}
+  .status.converged{background:rgba(130,189,111,.14);color:var(--ok);} .status.converged .led{background:var(--ok);}
+  .status.diverged{background:rgba(232,103,78,.14);color:var(--warn);} .status.diverged .led{background:var(--warn);}
+  @keyframes blink{50%{opacity:.3;}}
+
+  /* pitfalls */
+  .pit{display:flex;flex-direction:column;gap:12px;}
+  .pit .ico{font-family:"JetBrains Mono",monospace;font-size:13px;font-weight:700;padding:3px 10px;border-radius:7px;align-self:flex-start;}
+  .pit.bad .ico{background:rgba(232,103,78,.14);color:var(--warn);}
+  .pit.slow .ico{background:rgba(127,169,214,.14);color:var(--loss);}
+  .pit.trap .ico{background:rgba(240,168,48,.14);color:var(--lr);}
+  .pit.cond .ico{background:rgba(65,201,182,.14);color:var(--grad);}
+  .pit h4{font-family:"Noto Serif SC";font-size:19px;margin:0;font-weight:700;}
+  .pit p{font-size:14px;color:var(--muted);margin:0;max-width:none;}
+  .try{align-self:flex-start;margin-top:4px;border:1px solid var(--border);background:transparent;color:var(--text);font-family:"JetBrains Mono",monospace;font-size:12.5px;padding:8px 14px;border-radius:8px;cursor:pointer;transition:.15s;}
+  .try:hover{border-color:var(--lr);color:var(--lr);background:rgba(240,168,48,.06);}
+
+  footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--border-soft);color:var(--faint);font-size:13px;font-family:"JetBrains Mono",monospace;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">模型训练 · 核心概念</div>
+    <h1>梯度下降
+      <span class="en">GRADIENT DESCENT — how a model learns by going downhill</span>
+    </h1>
+    <p class="lede">几乎所有神经网络的训练，本质上都是同一件事：在一个看不见全貌的"损失地形"上，一小步一小步地往低处走。这份教程让你亲手调一调，看清每一步到底发生了什么。</p>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button class="tab active" data-tab="intuition"><span class="n">01</span>直观理解</button>
+    <button class="tab" data-tab="math"><span class="n">02</span>数学原理</button>
+    <button class="tab" data-tab="lab"><span class="n">03</span>互动实验台</button>
+    <button class="tab" data-tab="pitfalls"><span class="n">04</span>常见陷阱</button>
+  </nav>
+
+  <!-- ===================== 01 直观理解 ===================== -->
+  <section class="page active" data-page="intuition">
+    <h2>蒙眼下山</h2>
+    <p class="sub">把数学先放一边。先建立一个能记一辈子的画面。</p>
+
+    <div class="grid2">
+      <div class="card">
+        <p>想象你被蒙住眼睛，站在一片连绵的山坡上，想走到<strong>最低的山谷</strong>。你看不见全貌，但每一步都能<strong>用脚感受到哪个方向最陡</strong>。</p>
+        <p style="color:var(--muted)">于是你的策略很简单：<strong style="color:var(--text)">朝着脚下最陡的下坡方向，迈出一小步</strong>。然后重新感受、再迈一步，如此反复，直到脚下变平——你就到谷底了。</p>
+        <p style="color:var(--muted);margin-bottom:0">这就是梯度下降的全部直觉。下面这个小球，正在做的就是这件事。</p>
+      </div>
+      <div class="stage">
+        <div class="canvas-wrap"><canvas id="cv-intuition" height="300"></canvas></div>
+        <div class="hint">▶ 小球持续朝下坡方向移动，最终停在谷底</div>
+      </div>
+    </div>
+
+    <h2>对应关系</h2>
+    <p class="sub">下山故事里的每个元素，在训练里都有一个名字。记住这张表，后面的公式就是它的翻译。</p>
+    <div class="card">
+      <div class="map-row"><div class="map-real">⛰️ 整片山的高低起伏</div><div class="map-arrow">→</div><div class="map-math"><span class="chip j">损失函数 J(θ)</span> 衡量模型预测有多差</div></div>
+      <div class="map-row"><div class="map-real">📍 你现在站的位置</div><div class="map-arrow">→</div><div class="map-math"><span class="chip p">参数 θ</span> 模型里所有的权重</div></div>
+      <div class="map-row"><div class="map-real">📐 脚下最陡的坡度与方向</div><div class="map-arrow">→</div><div class="map-math"><span class="chip g">梯度 ∇J(θ)</span> 损失上升最快的方向</div></div>
+      <div class="map-row"><div class="map-real">👣 每一步迈多大</div><div class="map-arrow">→</div><div class="map-math"><span class="chip l">学习率 α</span> 步长，自己定的超参数</div></div>
+      <div class="map-row"><div class="map-real">🏁 走到谷底、脚下变平</div><div class="map-arrow">→</div><div class="map-math">收敛 —— 梯度趋近于 0，训练完成</div></div>
+    </div>
+    <p style="color:var(--faint);font-size:13px;margin-top:14px">⚠️ 一个关键细节：梯度指向损失<em>上升</em>最快的方向，所以下山时我们要朝它的<strong>反方向</strong>走——这就是公式里那个减号的由来。</p>
+  </section>
+
+  <!-- ===================== 02 数学原理 ===================== -->
+  <section class="page" data-page="math">
+    <h2>一行更新公式</h2>
+    <p class="sub">梯度下降的全部数学，浓缩在这一行里。每走一步，就执行一次它。鼠标悬停看每一块的含义。</p>
+
+    <div class="card">
+      <div class="formula">
+        <span class="f-piece f-p" title="新的参数">θ</span><span class="f-op"> := </span><span class="f-piece f-p" title="当前参数">θ</span><span class="f-op"> − </span><span class="f-piece f-l" title="学习率：步子大小">α</span><span class="f-piece f-g" title="梯度：最陡上坡方向">∇J(θ)</span>
+      </div>
+      <div class="legend">
+        <div class="leg"><div class="dot" style="background:var(--param)"></div><div><b style="color:var(--param)">θ</b>（参数 / theta）<small>模型要学的全部权重。下山时就是你的"坐标"。训练就是不断更新它。</small></div></div>
+        <div class="leg"><div class="dot" style="background:var(--grad)"></div><div><b style="color:var(--grad)">∇J(θ)</b>（梯度 / nabla J）<small>损失对每个参数的偏导，指向损失<em>上升</em>最快的方向。坡越陡，它越大。</small></div></div>
+        <div class="leg"><div class="dot" style="background:var(--lr)"></div><div><b style="color:var(--lr)">α</b>（学习率 / alpha）<small>步长。太大就冲过头甚至发散，太小就慢得要命。整份教程里最值得你亲手调的旋钮。</small></div></div>
+        <div class="leg"><div class="dot" style="background:var(--faint)"></div><div><b style="color:var(--text)">−</b>（减号）<small>因为梯度指向上坡，要下山就得朝反方向走。整个"下降"二字就藏在这个负号里。</small></div></div>
+      </div>
+    </div>
+
+    <h2>读成一句大白话</h2>
+    <div class="card" style="font-size:17px;line-height:1.9">
+      <span class="chip p">新位置</span> 等于 <span class="chip p">旧位置</span>，
+      减去 <span class="chip l">一小步</span>（学习率）
+      乘以 <span class="chip g">当前最陡的上坡方向</span>（梯度）。
+      <p style="color:var(--muted);font-size:15px;margin:16px 0 0">坡越陡（梯度大）→ 这一步迈得越远；越接近谷底（梯度趋近 0）→ 步子自动变小，慢慢停下。这套"自动刹车"的机制，正是它优雅的地方。</p>
+    </div>
+
+    <h2>动手感受步长</h2>
+    <p class="sub">拖动学习率，看同一个起点、同一个梯度下，一步到底走多远。</p>
+    <div class="stage">
+      <div class="canvas-wrap"><canvas id="cv-step" height="240"></canvas></div>
+      <div style="max-width:420px;margin:16px auto 0">
+        <div class="ctl-label"><span>学习率 α</span><span class="v lr" id="step-aval">0.30</span></div>
+        <input type="range" id="step-alpha" min="0.02" max="1.6" step="0.02" value="0.3">
+        <div class="hint" id="step-msg">一步从起点走到新位置 —— 黄色箭头就是 −α·∇J</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 03 实验台 ===================== -->
+  <section class="page" data-page="lab">
+    <h2>互动实验台</h2>
+    <p class="sub">这是教学演示的主场。换函数、调学习率、<strong style="color:var(--text)">点击曲线任意位置设置起点</strong>，然后单步或自动播放，盯着右侧的实时数字看每一步如何计算出来。</p>
+
+    <div class="lab">
+      <div class="stage">
+        <div class="canvas-wrap"><canvas id="cv-lab" height="420"></canvas></div>
+        <div class="hint" id="lab-hint">点击图中任意位置 → 设为新起点</div>
+        <div style="margin-top:14px;border-top:1px solid var(--border-soft);padding-top:14px">
+          <div class="ctl-label" style="margin-bottom:9px"><span style="color:var(--loss)">损失随迭代下降</span><span class="v j" id="lab-curiter" style="font-size:13px">—</span></div>
+          <div class="canvas-wrap"><canvas id="cv-loss" height="120"></canvas></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>地形</h3>
+        <div class="seg" id="dim-seg">
+          <button data-dim="1d" class="on">一维 (1 参数)</button>
+          <button data-dim="2d">二维 (2 参数)</button>
+        </div>
+        <select id="func-sel"></select>
+        <p class="fdesc" id="func-desc"></p>
+
+        <h3>学习率 α</h3>
+        <div class="ctl-label"><span>步子大小</span><span class="v lr" id="lab-aval">0.10</span></div>
+        <input type="range" id="lab-alpha" min="0.01" max="2.5" step="0.01" value="0.1">
+
+        <div id="start1d-box">
+          <h3>起点 θ₀</h3>
+          <div class="ctl-label"><span>初始参数</span><span class="v" id="lab-x0val">—</span></div>
+          <input type="range" id="lab-x0" min="0" max="100" step="1" value="10">
+        </div>
+
+        <h3>运行</h3>
+        <div class="btn-row" style="margin-bottom:8px">
+          <button class="btn" id="btn-step">单步 →</button>
+          <button class="btn primary" id="btn-play">▶ 自动播放</button>
+        </div>
+        <div class="btn-row">
+          <button class="btn" id="btn-reset">↺ 重置</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top:18px">
+      <h3 style="margin-top:0">实时读数</h3>
+      <div class="read">
+        <div class="cell"><div class="k">迭代 step</div><div class="val" id="r-iter">0</div></div>
+        <div class="cell"><div class="k">损失 J(θ)</div><div class="val j" id="r-loss">—</div></div>
+        <div class="cell"><div class="k">参数 θ</div><div class="val" id="r-theta">—</div></div>
+        <div class="cell"><div class="k">梯度 ∇J(θ)</div><div class="val g" id="r-grad">—</div></div>
+      </div>
+      <h3>这一步是怎么算出来的</h3>
+      <div class="calc" id="r-calc">
+        <span class="lbl">θ_new = θ − α · ∇J(θ)</span>
+        点击「单步」或「自动播放」开始 —
+      </div>
+      <span class="status running" id="r-status"><span class="led"></span>等待开始</span>
+    </div>
+  </section>
+
+  <!-- ===================== 04 常见陷阱 ===================== -->
+  <section class="page" data-page="pitfalls">
+    <h2>四个经典陷阱</h2>
+    <p class="sub">理论很美，但实战里梯度下降经常"翻车"。下面每张卡片配一个一键演示——点进去，在实验台里亲眼看它出问题。</p>
+
+    <div class="grid2">
+      <div class="card pit bad">
+        <span class="ico">α 太大</span>
+        <h4>步子迈太大 → 震荡 / 发散</h4>
+        <p>学习率过大时，每一步都冲过谷底落到对面更高处，越走越高，损失爆炸。这是新手最常见的"loss 变成 NaN"。</p>
+        <button class="try" data-preset="diverge">▶ 演示：α=2.1 的发散</button>
+      </div>
+      <div class="card pit slow">
+        <span class="ico">α 太小</span>
+        <h4>步子太碎 → 慢得要命</h4>
+        <p>学习率过小虽然稳，但要走成千上万步才到谷底，浪费大量算力和时间。调参就是在"快"和"稳"之间找平衡。</p>
+        <button class="try" data-preset="slow">▶ 演示：α=0.02 的龟速</button>
+      </div>
+      <div class="card pit trap">
+        <span class="ico">局部最小</span>
+        <h4>掉进小坑 → 错过全局最优</h4>
+        <p>地形崎岖时，小球会卡在离起点最近的小谷底，以为到家了，其实更深的谷在别处。换个起点结果可能完全不同。</p>
+        <button class="try" data-preset="local">▶ 演示：崎岖地形卡住</button>
+      </div>
+      <div class="card pit cond">
+        <span class="ico">病态条件</span>
+        <h4>狭长山谷 → 来回横跳</h4>
+        <p>当某些方向比其他方向陡得多，路径会沿谷壁反复"之"字形横跳，前进缓慢。这是用 Adam、动量等改进算法的核心动机。</p>
+        <button class="try" data-preset="valley">▶ 演示：二维狭长山谷</button>
+      </div>
+    </div>
+
+    <h2>那么，怎么办？</h2>
+    <div class="card">
+      <p style="margin-top:0">这些陷阱催生了梯度下降的一整个"家族"。了解原始版本的毛病，才能理解它们为什么存在：</p>
+      <div class="map-row"><div class="map-real"><strong>动量 Momentum</strong></div><div class="map-arrow">→</div><div style="color:var(--muted);font-size:14px">累积历史方向，像滚下山的球，能冲过小坑、抑制横跳</div></div>
+      <div class="map-row"><div class="map-real"><strong>AdaGrad / RMSProp</strong></div><div class="map-arrow">→</div><div style="color:var(--muted);font-size:14px">给每个参数自适应不同的学习率，缓解病态条件</div></div>
+      <div class="map-row"><div class="map-real"><strong>Adam</strong></div><div class="map-arrow">→</div><div style="color:var(--muted);font-size:14px">动量 + 自适应学习率的结合，当今深度学习的默认选择</div></div>
+      <div class="map-row" style="border-bottom:none"><div class="map-real"><strong>学习率调度</strong></div><div class="map-arrow">→</div><div style="color:var(--muted);font-size:14px">先大后小：开始快速下山，临近谷底时放慢精修</div></div>
+    </div>
+  </section>
+
+  <footer>
+    互动教学演示 · 梯度下降 / Gradient Descent · 可点击曲线设起点、调学习率、单步与自动播放
+  </footer>
+</div>
+
+<script>
+"use strict";
+/* ---------- 工具 ---------- */
+const $ = s => document.querySelector(s);
+const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
+function fmt(n,d=3){ if(!isFinite(n)) return '∞'; const a=Math.abs(n); if(a>=1e4||(a<1e-3&&a>0)) return n.toExponential(2); return n.toFixed(d); }
+function setupCanvas(cv){
+  const dpr = Math.min(window.devicePixelRatio||1, 2);
+  const rect = cv.getBoundingClientRect();
+  const w = rect.width || cv.parentElement.getBoundingClientRect().width;
+  cv.width = w*dpr; cv.height = (cv.getAttribute('height')*1)*dpr;
+  const ctx = cv.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, W:w, H:cv.getAttribute('height')*1};
+}
+const COL = {bg:'#100f0d',grid:'rgba(255,255,255,.05)',axis:'#4a463f',curve:'#7fa9d6',
+  ball:'#f0a830',grad:'#41c9b6',warn:'#e8674e',ok:'#82bd6f',muted:'#9a938a',path:'#f0a830'};
+
+/* ---------- 函数库 ---------- */
+const F1D = {
+  bowl:{name:'碗形（凸函数）',desc:'只有一个全局最小值，最理想的情况——无论从哪出发都能到底。',
+    f:x=>0.5*x*x, df:x=>x, domain:[-7,7], start:-6},
+  doublewell:{name:'双谷（两个局部最小）',desc:'有两个谷底。从哪边出发，就掉进哪一个——可能错过更深的那个。',
+    f:x=>0.01*x*x*x*x-0.22*x*x+0.06*x, df:x=>0.04*x*x*x-0.44*x+0.06, domain:[-8,8], start:0.9},
+  wiggly:{name:'崎岖（多个局部最小）',desc:'布满小坑。梯度下降极易卡在离起点最近的小坑里出不来。',
+    f:x=>0.07*x*x+1.3*Math.cos(1.4*x), df:x=>0.14*x-1.82*Math.sin(1.4*x), domain:[-9,9], start:6.2}
+};
+const F2D = {
+  bowl2:{name:'碗形（二维凸）',desc:'两个参数的理想碗形，路径笔直奔向谷底。',
+    f:(x,y)=>0.5*(x*x+y*y), grad:(x,y)=>[x,y], domain:[-5,5], start:[-4.2,3.4]},
+  valley:{name:'狭长山谷（病态条件）',desc:'一个方向远比另一个陡，路径会沿谷壁反复横跳，前进缓慢。',
+    f:(x,y)=>0.5*(x*x+14*y*y), grad:(x,y)=>[x,14*y], domain:[-5,5], start:[-4.3,1.6]}
+};
+
+/* ============================================================
+   01 直观理解 — 自动循环的小球
+   ============================================================ */
+(function(){
+  const cv=$('#cv-intuition'); let ctx,W,H;
+  const f=x=>0.6+0.9*Math.cos(x*0.9)+0.06*x*x*0.0+0.0; // placeholder replaced below
+  // a nice multi-valley but converging shape
+  const fn = x => 0.05*x*x + 1.0*Math.sin(x*0.85) + 1.0;
+  const dfn= x => 0.10*x + 0.85*Math.cos(x*0.85);
+  const dom=[-7.5,7.5];
+  let xmin=dom[0],xmax=dom[1],ymin,ymax,x,xdisp,alpha=0.35,t=0;
+  function range(){let lo=1e9,hi=-1e9;for(let s=xmin;s<=xmax;s+=0.05){const y=fn(s);lo=Math.min(lo,y);hi=Math.max(hi,y);}const pad=(hi-lo)*0.15;ymin=lo-pad;ymax=hi+pad;}
+  function reset(){x=6.6;xdisp=x;}
+  function X(v){return 46+(v-xmin)/(xmax-xmin)*(W-70);}
+  function Y(v){return H-34-(v-ymin)/(ymax-ymin)*(H-58);}
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    // grid
+    ctx.strokeStyle=COL.grid;ctx.lineWidth=1;
+    for(let gx=Math.ceil(xmin);gx<=xmax;gx++){ctx.beginPath();ctx.moveTo(X(gx),16);ctx.lineTo(X(gx),H-34);ctx.stroke();}
+    // curve
+    ctx.strokeStyle=COL.curve;ctx.lineWidth=2.4;ctx.beginPath();
+    for(let i=0;i<=240;i++){const xx=xmin+(xmax-xmin)*i/240;const px=X(xx),py=Y(fn(xx));i?ctx.lineTo(px,py):ctx.moveTo(px,py);}ctx.stroke();
+    // ball
+    const bx=X(xdisp),by=Y(fn(xdisp));
+    ctx.fillStyle='rgba(240,168,48,.18)';ctx.beginPath();ctx.arc(bx,by,16,0,7);ctx.fill();
+    ctx.fillStyle=COL.ball;ctx.beginPath();ctx.arc(bx,by,7.5,0,7);ctx.fill();
+    // drop shadow line
+    ctx.strokeStyle='rgba(240,168,48,.25)';ctx.setLineDash([3,4]);ctx.beginPath();ctx.moveTo(bx,by);ctx.lineTo(bx,H-34);ctx.stroke();ctx.setLineDash([]);
+  }
+  function step(){
+    if(Math.abs(dfn(x))>0.01) x = clamp(x-alpha*dfn(x),xmin,xmax);
+    else { t++; if(t>90){ x=(Math.random()<.5?6.6:-6.6); t=0; } }
+  }
+  let acc=0,last=performance.now();
+  function loop(now){
+    const dt=now-last;last=now;acc+=dt;
+    if(acc>140){step();acc=0;}
+    xdisp+=(x-xdisp)*0.18;
+    draw();requestAnimationFrame(loop);
+  }
+  function init(){const s=setupCanvas(cv);ctx=s.ctx;W=s.W;H=s.H;range();}
+  window.addEventListener('resize',()=>{const s=setupCanvas(cv);ctx=s.ctx;W=s.W;H=s.H;});
+  init();reset();requestAnimationFrame(loop);
+})();
+
+/* ============================================================
+   02 数学原理 — 步长演示
+   ============================================================ */
+(function(){
+  const cv=$('#cv-step');let ctx,W,H;
+  const fn=x=>0.5*x*x, dfn=x=>x;
+  const xmin=-6,xmax=6;let ymin,ymax;
+  const x0=-4;
+  let alpha=0.3;
+  function range(){ymin=-1;ymax=fn(xmax)*0.6;}
+  function X(v){return 40+(v-xmin)/(xmax-xmin)*(W-60);}
+  function Y(v){return H-30-(v-ymin)/(ymax-ymin)*(H-50);}
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    ctx.strokeStyle=COL.grid;ctx.lineWidth=1;
+    for(let gx=Math.ceil(xmin);gx<=xmax;gx++){ctx.beginPath();ctx.moveTo(X(gx),14);ctx.lineTo(X(gx),H-30);ctx.stroke();}
+    ctx.strokeStyle=COL.curve;ctx.lineWidth=2.4;ctx.beginPath();
+    for(let i=0;i<=240;i++){const xx=xmin+(xmax-xmin)*i/240;i?ctx.lineTo(X(xx),Y(fn(xx))):ctx.moveTo(X(xx),Y(fn(xx)));}ctx.stroke();
+    const g=dfn(x0); const x1=x0-alpha*g;
+    // start ball
+    const sx=X(x0),sy=Y(fn(x0));
+    // tangent
+    ctx.strokeStyle='rgba(65,201,182,.55)';ctx.lineWidth=1.6;ctx.setLineDash([5,4]);
+    ctx.beginPath();ctx.moveTo(X(x0-2),Y(fn(x0)-g*2));ctx.lineTo(X(x0+2),Y(fn(x0)+g*2));ctx.stroke();ctx.setLineDash([]);
+    // step arrow along baseline
+    const baseY=Y(ymin)+12;
+    ctx.strokeStyle=COL.ball;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(sx,baseY);ctx.lineTo(X(x1),baseY);ctx.stroke();
+    const dir=Math.sign(X(x1)-sx)||1;
+    ctx.fillStyle=COL.ball;ctx.beginPath();ctx.moveTo(X(x1),baseY);ctx.lineTo(X(x1)-dir*9,baseY-5);ctx.lineTo(X(x1)-dir*9,baseY+5);ctx.fill();
+    // projection lines
+    ctx.strokeStyle='rgba(255,255,255,.12)';ctx.setLineDash([2,3]);
+    ctx.beginPath();ctx.moveTo(sx,sy);ctx.lineTo(sx,baseY);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(X(x1),Y(fn(x1)));ctx.lineTo(X(x1),baseY);ctx.stroke();ctx.setLineDash([]);
+    // balls
+    ctx.fillStyle=COL.muted;ctx.beginPath();ctx.arc(sx,sy,6,0,7);ctx.fill();
+    ctx.fillStyle=COL.ball;ctx.beginPath();ctx.arc(X(x1),Y(fn(x1)),7,0,7);ctx.fill();
+    // labels
+    ctx.fillStyle=COL.muted;ctx.font='11px JetBrains Mono';ctx.textAlign='center';
+    ctx.fillText('θ₀',sx,sy-12);ctx.fillStyle=COL.ball;ctx.fillText('θ₁',X(x1),Y(fn(x1))-12);
+  }
+  function init(){const s=setupCanvas(cv);ctx=s.ctx;W=s.W;H=s.H;range();draw();}
+  const sl=$('#step-alpha'),av=$('#step-aval'),msg=$('#step-msg');
+  sl.addEventListener('input',()=>{alpha=+sl.value;av.textContent=alpha.toFixed(2);
+    const x1=x0-alpha*dfn(x0);
+    if(Math.abs(x1)>Math.abs(x0)+0.01) msg.innerHTML='⚠️ 步子太大 —— 冲过谷底还落得更高，再走下去就会发散！';
+    else if(Math.sign(x1)!==Math.sign(x0)&&Math.abs(x1)>0.05) msg.innerHTML='⚠️ 一步越过了谷底，落到对面 —— 学习率偏大';
+    else if(alpha<0.15) msg.textContent='步子很小 —— 安全，但要走很多步才到底';
+    else msg.innerHTML='一步从起点走到新位置 —— 黄色箭头就是 −α·∇J';
+    draw();});
+  window.addEventListener('resize',()=>{const s=setupCanvas(cv);ctx=s.ctx;W=s.W;H=s.H;draw();});
+  init();
+})();
+
+/* ============================================================
+   03 实验台 — 主交互
+   ============================================================ */
+const Lab = (function(){
+  const cvMain=$('#cv-lab'), cvLoss=$('#cv-loss');
+  let mctx,mW,mH,lctx,lW,lH;
+  let dim='1d';
+  let cur1d='bowl', cur2d='bowl2';
+  let alpha=0.1;
+  // state
+  let x, xdisp, p, pdisp, iter, hist, status, lastStepInfo;
+  let contourCache=null, contourKey='';
+  let playing=false, timer=null;
+
+  function curFn(){ return dim==='1d'?F1D[cur1d]:F2D[cur2d]; }
+
+  /* ---- view ranges (1d) ---- */
+  let ymin,ymax;
+  function range1d(){const fn=F1D[cur1d];let lo=1e9,hi=-1e9;for(let s=fn.domain[0];s<=fn.domain[1];s+=0.04){const y=fn.f(s);lo=Math.min(lo,y);hi=Math.max(hi,y);}const pad=(hi-lo)*0.12||1;ymin=lo-pad;ymax=hi+pad;}
+
+  /* ---- coordinate maps ---- */
+  function X1(v){const d=F1D[cur1d].domain;return 48+(v-d[0])/(d[1]-d[0])*(mW-72);}
+  function Y1(v){return mH-36-(v-ymin)/(ymax-ymin)*(mH-58);}
+  function px2x(px){const d=F1D[cur1d].domain;return d[0]+(px-48)/(mW-72)*(d[1]-d[0]);}
+  function X2(v){const d=F2D[cur2d].domain;return 40+(v-d[0])/(d[1]-d[0])*(mW-80);}
+  function Y2(v){const d=F2D[cur2d].domain;return mH-40-(v-d[0])/(d[1]-d[0])*(mH-80);}
+  function px2x2(px){const d=F2D[cur2d].domain;return d[0]+(px-40)/(mW-80)*(d[1]-d[0]);}
+  function py2y2(py){const d=F2D[cur2d].domain;return d[0]+((mH-40)-py)/(mH-80)*(d[1]-d[0]);}
+
+  /* ---- reset ---- */
+  function reset(keepStart){
+    iter=0;hist=[];status='running';lastStepInfo=null;
+    if(dim==='1d'){
+      const fn=F1D[cur1d];
+      if(!keepStart) x=fn.start;
+      xdisp=x; hist.push({i:0,loss:fn.f(x)});
+    }else{
+      const fn=F2D[cur2d];
+      if(!keepStart) p=fn.start.slice();
+      pdisp=p.slice(); hist.push({i:0,loss:fn.f(p[0],p[1])});
+    }
+    stopPlay();updateReadout();
+  }
+
+  /* ---- one optimization step ---- */
+  function step(){
+    if(status!=='running') return;
+    if(dim==='1d'){
+      const fn=F1D[cur1d];const g=fn.df(x);const old=x;
+      const nx=x-alpha*g;
+      lastStepInfo={old,g,nx,oldL:fn.f(old)};
+      x=nx;iter++;
+      const L=fn.f(x);
+      hist.push({i:iter,loss:L});
+      const span=fn.domain[1]-fn.domain[0];
+      if(!isFinite(L)||Math.abs(x)>span||L>1e7){status='diverged';}
+      else if(Math.abs(g)<1e-3){status='converged';}
+      else if(iter>=400){status='converged';}
+    }else{
+      const fn=F2D[cur2d];const g=fn.grad(p[0],p[1]);const old=p.slice();
+      const np=[p[0]-alpha*g[0],p[1]-alpha*g[1]];
+      lastStepInfo={old,g,np,oldL:fn.f(old[0],old[1])};
+      p=np;iter++;
+      const L=fn.f(p[0],p[1]);
+      hist.push({i:iter,loss:L});
+      const gm=Math.hypot(g[0],g[1]);
+      const span=fn.domain[1]-fn.domain[0];
+      if(!isFinite(L)||Math.hypot(p[0],p[1])>span||L>1e7){status='diverged';}
+      else if(gm<1e-3){status='converged';}
+      else if(iter>=400){status='converged';}
+    }
+    if(status!=='running') stopPlay();
+    updateReadout();
+  }
+
+  /* ---- drawing 1d ---- */
+  function draw1d(){
+    const fn=F1D[cur1d];
+    mctx.clearRect(0,0,mW,mH);
+    // grid
+    mctx.strokeStyle=COL.grid;mctx.lineWidth=1;
+    for(let gx=Math.ceil(fn.domain[0]);gx<=fn.domain[1];gx++){mctx.beginPath();mctx.moveTo(X1(gx),16);mctx.lineTo(X1(gx),mH-36);mctx.stroke();}
+    // axis baseline
+    mctx.strokeStyle=COL.axis;mctx.beginPath();mctx.moveTo(40,mH-36);mctx.lineTo(mW-20,mH-36);mctx.stroke();
+    // curve
+    mctx.strokeStyle=COL.curve;mctx.lineWidth=2.6;mctx.beginPath();
+    for(let i=0;i<=300;i++){const xx=fn.domain[0]+(fn.domain[1]-fn.domain[0])*i/300;const py=Y1(clamp(fn.f(xx),ymin-99,ymax+99));i?mctx.lineTo(X1(xx),py):mctx.moveTo(X1(xx),py);}mctx.stroke();
+    // gradient tangent at current
+    const cx=xdisp, gy=fn.f(cx), g=fn.df(cx);
+    const tlen=1.5;
+    mctx.strokeStyle='rgba(65,201,182,.7)';mctx.lineWidth=1.8;mctx.setLineDash([5,4]);
+    mctx.beginPath();mctx.moveTo(X1(cx-tlen),Y1(gy-g*tlen));mctx.lineTo(X1(cx+tlen),Y1(gy+g*tlen));mctx.stroke();mctx.setLineDash([]);
+    // gradient direction arrow (downhill = -g) along baseline
+    const baseY=mH-22;
+    const arrowEnd=cx-Math.sign(g)*Math.min(Math.abs(g)*alpha*4+0.4,2.2);
+    mctx.strokeStyle=COL.ball;mctx.lineWidth=2.4;mctx.beginPath();mctx.moveTo(X1(cx),baseY);mctx.lineTo(X1(arrowEnd),baseY);mctx.stroke();
+    const dir=Math.sign(X1(arrowEnd)-X1(cx))||1;
+    mctx.fillStyle=COL.ball;mctx.beginPath();mctx.moveTo(X1(arrowEnd),baseY);mctx.lineTo(X1(arrowEnd)-dir*8,baseY-4);mctx.lineTo(X1(arrowEnd)-dir*8,baseY+4);mctx.fill();
+    // ball
+    const bx=X1(cx),by=Y1(clamp(gy,ymin-99,ymax+99));
+    mctx.fillStyle=status==='diverged'?'rgba(232,103,78,.2)':status==='converged'?'rgba(130,189,111,.2)':'rgba(240,168,48,.2)';
+    mctx.beginPath();mctx.arc(bx,by,15,0,7);mctx.fill();
+    mctx.fillStyle=status==='diverged'?COL.warn:status==='converged'?COL.ok:COL.ball;
+    mctx.beginPath();mctx.arc(bx,by,8,0,7);mctx.fill();
+    mctx.strokeStyle='rgba(0,0,0,.3)';mctx.lineWidth=1.5;mctx.stroke();
+    // labels
+    mctx.fillStyle=COL.muted;mctx.font='11px JetBrains Mono';mctx.textAlign='left';
+    mctx.fillText('损失 J',mW-58,24);mctx.fillText('参数 θ',mW-62,mH-10);
+  }
+
+  /* ---- contour for 2d ---- */
+  function buildContour(){
+    const fn=F2D[cur2d];const key=cur2d+'_'+Math.round(mW)+'_'+Math.round(mH);
+    if(contourKey===key&&contourCache) return;
+    const off=document.createElement('canvas');off.width=mW;off.height=mH;
+    const octx=off.getContext('2d');
+    const d=fn.domain;
+    // sample range of f
+    let lo=1e9,hi=-1e9;
+    for(let i=0;i<=40;i++)for(let j=0;j<=40;j++){const xx=d[0]+(d[1]-d[0])*i/40,yy=d[0]+(d[1]-d[0])*j/40;const v=fn.f(xx,yy);lo=Math.min(lo,v);hi=Math.max(hi,v);}
+    const img=octx.createImageData(mW,mH);const data=img.data;
+    function colAt(t){ // 0 low (valley) -> 1 high
+      // topographic: deep teal-blue low -> warm high
+      const stops=[[14,32,42],[26,74,80],[60,120,110],[150,140,80],[150,108,60]];
+      const seg=clamp(t,0,1)*(stops.length-1);const k=Math.floor(seg);const f2=seg-k;
+      const a=stops[k],b=stops[Math.min(k+1,stops.length-1)];
+      return [a[0]+(b[0]-a[0])*f2,a[1]+(b[1]-a[1])*f2,a[2]+(b[2]-a[2])*f2];
+    }
+    for(let py=0;py<mH;py++){
+      for(let px=0;px<mW;px++){
+        const xx=px2x2(px),yy=py2y2(py);
+        let v=fn.f(xx,yy);let t=(v-lo)/(hi-lo);
+        const band=Math.floor(t*16);
+        let c=colAt(band/16);
+        // contour line: darken at band boundary
+        const tn=( (fn.f(px2x2(px+1),yy)-lo)/(hi-lo) );
+        const bn=Math.floor(tn*16);
+        let mul=1;
+        if(band!==bn) mul=0.55;
+        const idx=(py*mW+px)*4;
+        data[idx]=c[0]*mul;data[idx+1]=c[1]*mul;data[idx+2]=c[2]*mul;data[idx+3]=255;
+      }
+    }
+    octx.putImageData(img,0,0);
+    contourCache=off;contourKey=key;
+  }
+  function draw2d(){
+    const fn=F2D[cur2d];
+    buildContour();
+    mctx.clearRect(0,0,mW,mH);
+    mctx.drawImage(contourCache,0,0);
+    // path
+    // we need visited points: store them
+    if(path2d.length>1){
+      mctx.strokeStyle=COL.path;mctx.lineWidth=2;
+      mctx.beginPath();
+      path2d.forEach((q,i)=>{const px=X2(q[0]),py=Y2(q[1]);i?mctx.lineTo(px,py):mctx.moveTo(px,py);});
+      mctx.stroke();
+      // dots
+      path2d.forEach(q=>{mctx.fillStyle='rgba(240,168,48,.55)';mctx.beginPath();mctx.arc(X2(q[0]),Y2(q[1]),2.5,0,7);mctx.fill();});
+    }
+    // gradient arrow at current
+    const g=fn.grad(pdisp[0],pdisp[1]);const gm=Math.hypot(g[0],g[1])||1;
+    const al=Math.min(0.9,1.2/gm)*1.0;
+    const ex=pdisp[0]-g[0]*al*0.5, ey=pdisp[1]-g[1]*al*0.5;
+    mctx.strokeStyle=COL.grad;mctx.lineWidth=2;mctx.beginPath();
+    mctx.moveTo(X2(pdisp[0]),Y2(pdisp[1]));mctx.lineTo(X2(ex),Y2(ey));mctx.stroke();
+    // ball
+    const bx=X2(pdisp[0]),by=Y2(pdisp[1]);
+    mctx.fillStyle=status==='diverged'?'rgba(232,103,78,.25)':status==='converged'?'rgba(130,189,111,.25)':'rgba(240,168,48,.25)';
+    mctx.beginPath();mctx.arc(bx,by,14,0,7);mctx.fill();
+    mctx.fillStyle=status==='diverged'?COL.warn:status==='converged'?COL.ok:COL.ball;
+    mctx.beginPath();mctx.arc(bx,by,7.5,0,7);mctx.fill();
+    mctx.strokeStyle='rgba(0,0,0,.35)';mctx.lineWidth=1.5;mctx.stroke();
+    // axis labels
+    mctx.fillStyle='rgba(255,255,255,.5)';mctx.font='11px JetBrains Mono';mctx.textAlign='left';
+    mctx.fillText('θ₁',mW-30,mH-44);mctx.fillText('θ₂',46,22);
+  }
+
+  /* path tracking for 1d & 2d */
+  let path1d=[], path2d=[];
+  function pushPath(){
+    if(dim==='1d') path1d.push(x); else path2d.push(p.slice());
+  }
+
+  function draw(){
+    if(dim==='1d') draw1dWithTrail(); else draw2d();
+  }
+  function draw1dWithTrail(){
+    draw1d();
+    // overlay trail using path1d
+    const fn=F1D[cur1d];
+    if(path1d.length>1){
+      mctx.fillStyle='rgba(240,168,48,.5)';
+      path1d.forEach(xx=>{mctx.beginPath();mctx.arc(X1(xx),Y1(clamp(fn.f(xx),ymin-99,ymax+99)),2.5,0,7);mctx.fill();});
+    }
+  }
+
+  /* ---- loss chart ---- */
+  function drawLoss(){
+    lctx.clearRect(0,0,lW,lH);
+    if(hist.length<1) return;
+    const losses=hist.map(h=>h.loss).filter(v=>isFinite(v));
+    if(!losses.length){lctx.fillStyle=COL.warn;lctx.font='12px JetBrains Mono';lctx.fillText('损失发散 → ∞',12,lH/2);return;}
+    let lo=Math.min(...losses),hi=Math.max(...losses);
+    if(hi-lo<1e-9) hi=lo+1;
+    const n=hist.length;
+    const PX=v=>34+ (n<2?0:(v/(n-1)))*(lW-46);
+    const PY=v=>lH-22-((clamp(v,lo,hi)-lo)/(hi-lo))*(lH-34);
+    // axes
+    lctx.strokeStyle=COL.grid;lctx.lineWidth=1;
+    lctx.beginPath();lctx.moveTo(34,8);lctx.lineTo(34,lH-22);lctx.lineTo(lW-8,lH-22);lctx.stroke();
+    // line
+    lctx.strokeStyle=status==='diverged'?COL.warn:COL.loss;lctx.lineWidth=2;lctx.beginPath();
+    hist.forEach((h,i)=>{const px=PX(i),py=PY(h.loss);i?lctx.lineTo(px,py):lctx.moveTo(px,py);});lctx.stroke();
+    // last dot
+    const last=hist[hist.length-1];
+    lctx.fillStyle=status==='converged'?COL.ok:(status==='diverged'?COL.warn:COL.loss);
+    lctx.beginPath();lctx.arc(PX(hist.length-1),PY(last.loss),3.5,0,7);lctx.fill();
+    // labels
+    lctx.fillStyle=COL.faint||'#6b655d';lctx.font='10px JetBrains Mono';lctx.textAlign='left';
+    lctx.fillText(fmt(hi,2),2,12);lctx.fillText(fmt(lo,2),2,lH-24);
+  }
+
+  /* ---- readout ---- */
+  function updateReadout(){
+    const fn=curFn();
+    $('#r-iter').textContent=iter;
+    if(dim==='1d'){
+      const L=F1D[cur1d].f(x),g=F1D[cur1d].df(x);
+      $('#r-loss').textContent=fmt(L);
+      $('#r-theta').textContent=fmt(x);
+      $('#r-grad').textContent=fmt(g);
+      if(lastStepInfo){
+        const s=lastStepInfo;
+        $('#r-calc').innerHTML=
+          '<span class="lbl">θ_new = θ − α · ∇J(θ)</span>'+
+          '<span style="color:var(--param)">'+fmt(s.nx)+'</span> = '+
+          '<span style="color:var(--param)">'+fmt(s.old)+'</span> − '+
+          '<span style="color:var(--lr)">'+alpha.toFixed(2)+'</span> × '+
+          '<span style="color:var(--grad)">'+fmt(s.g)+'</span>';
+      }
+    }else{
+      const L=F2D[cur2d].f(p[0],p[1]),g=F2D[cur2d].grad(p[0],p[1]);
+      $('#r-loss').textContent=fmt(L);
+      $('#r-theta').textContent='('+fmt(p[0],2)+', '+fmt(p[1],2)+')';
+      $('#r-grad').textContent='('+fmt(g[0],2)+', '+fmt(g[1],2)+')';
+      if(lastStepInfo){
+        const s=lastStepInfo;
+        $('#r-calc').innerHTML=
+          '<span class="lbl">θ_new = θ − α · ∇J(θ)  (按分量)</span>'+
+          'θ₁: <span style="color:var(--param)">'+fmt(s.np[0],2)+'</span> = '+fmt(s.old[0],2)+' − <span style="color:var(--lr)">'+alpha.toFixed(2)+'</span>×<span style="color:var(--grad)">'+fmt(s.g[0],2)+'</span><br>'+
+          'θ₂: <span style="color:var(--param)">'+fmt(s.np[1],2)+'</span> = '+fmt(s.old[1],2)+' − <span style="color:var(--lr)">'+alpha.toFixed(2)+'</span>×<span style="color:var(--grad)">'+fmt(s.g[1],2)+'</span>';
+      }
+    }
+    $('#lab-curiter').textContent='当前 step '+iter;
+    const st=$('#r-status');st.className='status '+status;
+    st.innerHTML='<span class="led"></span>'+(status==='running'?'进行中':status==='converged'?'已收敛 ✓ 梯度≈0':'已发散 ✗ 损失爆炸');
+    drawLoss();
+  }
+
+  /* ---- play ---- */
+  function startPlay(){
+    if(status!=='running'){return;}
+    playing=true;$('#btn-play').textContent='⏸ 暂停';
+    timer=setInterval(()=>{ pushPath(); step(); if(status!=='running'){stopPlay();} },220);
+  }
+  function stopPlay(){playing=false;if(timer){clearInterval(timer);timer=null;}$('#btn-play').textContent='▶ 自动播放';}
+
+  /* ---- animation loop ---- */
+  function animate(){
+    if(dim==='1d'){ xdisp+=(x-xdisp)*0.22; }
+    else { pdisp[0]+=(p[0]-pdisp[0])*0.22; pdisp[1]+=(p[1]-pdisp[1])*0.22; }
+    draw();
+    requestAnimationFrame(animate);
+  }
+
+  /* ---- UI wiring ---- */
+  function fillFuncSel(){
+    const sel=$('#func-sel');sel.innerHTML='';
+    const src=dim==='1d'?F1D:F2D;
+    const cur=dim==='1d'?cur1d:cur2d;
+    Object.keys(src).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=src[k].name;if(k===cur)o.selected=true;sel.appendChild(o);});
+    $('#func-desc').textContent=src[cur].desc;
+    $('#start1d-box').style.display=dim==='1d'?'block':'none';
+    if(dim==='1d') syncStartSlider();
+  }
+  function syncStartSlider(){
+    const fn=F1D[cur1d];const sl=$('#lab-x0');
+    sl.min=fn.domain[0];sl.max=fn.domain[1];sl.step=0.1;sl.value=x;
+    $('#lab-x0val').textContent=fmt(x,2);
+  }
+
+  function init(){
+    let s=setupCanvas(cvMain);mctx=s.ctx;mW=s.W;mH=s.H;
+    s=setupCanvas(cvLoss);lctx=s.ctx;lW=s.W;lH=s.H;
+    range1d();
+    path1d=[];path2d=[];
+    reset(false);
+    fillFuncSel();
+    requestAnimationFrame(animate);
+  }
+
+  // events
+  $('#dim-seg').addEventListener('click',e=>{
+    const b=e.target.closest('button');if(!b)return;
+    [...e.currentTarget.children].forEach(c=>c.classList.remove('on'));b.classList.add('on');
+    dim=b.dataset.dim;contourCache=null;contourKey='';
+    if(dim==='1d')range1d();
+    path1d=[];path2d=[];
+    fillFuncSel();reset(false);
+    $('#lab-hint').textContent= dim==='1d'?'点击图中任意位置 → 设为新起点':'点击等高线图任意位置 → 设为新起点';
+  });
+  $('#func-sel').addEventListener('change',e=>{
+    if(dim==='1d'){cur1d=e.target.value;range1d();}else{cur2d=e.target.value;contourCache=null;contourKey='';}
+    $('#func-desc').textContent=(dim==='1d'?F1D[cur1d]:F2D[cur2d]).desc;
+    path1d=[];path2d=[];reset(false);if(dim==='1d')syncStartSlider();
+  });
+  $('#lab-alpha').addEventListener('input',e=>{alpha=+e.target.value;$('#lab-aval').textContent=alpha.toFixed(2);});
+  $('#lab-x0').addEventListener('input',e=>{x=+e.target.value;xdisp=x;path1d=[];reset(true);$('#lab-x0val').textContent=fmt(x,2);});
+  $('#btn-step').addEventListener('click',()=>{stopPlay();pushPath();step();});
+  $('#btn-play').addEventListener('click',()=>{ if(playing)stopPlay(); else {if(status!=='running'){reset(true);}startPlay();} });
+  $('#btn-reset').addEventListener('click',()=>{path1d=[];path2d=[];reset(true);});
+
+  // click to set start
+  function clickHandler(ev){
+    const rect=cvMain.getBoundingClientRect();
+    const px=(ev.clientX-rect.left), py=(ev.clientY-rect.top);
+    if(dim==='1d'){
+      let nx=clamp(px2x(px),F1D[cur1d].domain[0],F1D[cur1d].domain[1]);
+      x=nx;xdisp=nx;path1d=[];reset(true);syncStartSlider();
+    }else{
+      const d=F2D[cur2d].domain;
+      let nx=clamp(px2x2(px),d[0],d[1]),ny=clamp(py2y2(py),d[0],d[1]);
+      p=[nx,ny];pdisp=[nx,ny];path2d=[];reset(true);
+    }
+  }
+  cvMain.addEventListener('click',clickHandler);
+
+  window.addEventListener('resize',()=>{
+    let s=setupCanvas(cvMain);mctx=s.ctx;mW=s.W;mH=s.H;
+    s=setupCanvas(cvLoss);lctx=s.ctx;lW=s.W;lH=s.H;
+    contourCache=null;contourKey='';
+  });
+
+  // presets (from pitfalls tab)
+  function applyPreset(name){
+    stopPlay();
+    if(name==='diverge'){dim='1d';cur1d='bowl';alpha=2.1;}
+    else if(name==='slow'){dim='1d';cur1d='bowl';alpha=0.02;}
+    else if(name==='local'){dim='1d';cur1d='wiggly';alpha=0.18;}
+    else if(name==='valley'){dim='2d';cur2d='valley';alpha=0.13;}
+    // sync dim buttons
+    [...$('#dim-seg').children].forEach(c=>c.classList.toggle('on',c.dataset.dim===dim));
+    contourCache=null;contourKey='';
+    if(dim==='1d')range1d();
+    path1d=[];path2d=[];
+    $('#lab-alpha').value=alpha;$('#lab-aval').textContent=alpha.toFixed(2);
+    fillFuncSel();reset(false);
+  }
+
+  init();
+  return {applyPreset, autoPlay:()=>{if(status==='running')startPlay();}};
+})();
+
+/* ============================================================
+   Tabs
+   ============================================================ */
+(function(){
+  const tabs=document.querySelectorAll('.tab');
+  const pages=document.querySelectorAll('.page');
+  function go(name){
+    tabs.forEach(t=>t.classList.toggle('active',t.dataset.tab===name));
+    pages.forEach(p=>p.classList.toggle('active',p.dataset.page===name));
+    window.scrollTo({top:0,behavior:'smooth'});
+    // 页面由 display:none 变为可见后，重新测量该页 canvas 的宽度
+    requestAnimationFrame(()=>window.dispatchEvent(new Event('resize')));
+  }
+  tabs.forEach(t=>t.addEventListener('click',()=>go(t.dataset.tab)));
+  // pitfall presets
+  document.querySelectorAll('.try').forEach(b=>{
+    b.addEventListener('click',()=>{ Lab.applyPreset(b.dataset.preset); go('lab'); setTimeout(()=>Lab.autoPlay(),420); });
+  });
+})();
+</script>
+</body>
+</html>

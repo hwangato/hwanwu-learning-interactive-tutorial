@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>泰勒展开阶数动态演示</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #f8fafc; overflow-x: hidden; }
+        .canvas-container { position: relative; width: 100%; height: 450px; }
+        canvas { display: block; background: white; border-radius: 0.5rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); cursor: crosshair; }
+        .control-panel { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(4px); }
+        .slider-thumb::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            background: #3b82f6;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-5xl mx-auto">
+        <!-- Header -->
+        <header class="mb-6 text-center">
+            <h1 class="text-3xl font-bold text-slate-800 mb-2">泰勒展开阶数动态演示</h1>
+            <p class="text-slate-600 text-sm">观察多项式如何通过增加阶数 \(n\) 在 \(x=0\) 处逼近原函数</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <!-- Left Sidebar Controls -->
+            <div class="lg:col-span-1 space-y-6">
+                <div class="control-panel p-6 rounded-xl border border-slate-200 shadow-sm">
+                    <label class="block text-sm font-semibold text-slate-700 mb-4">选择目标函数</label>
+                    <div class="flex flex-col space-y-2">
+                        <button id="btn-sin" class="px-4 py-2 rounded-md bg-blue-600 text-white font-medium transition-all hover:bg-blue-700">\(f(x) = \sin(x)\)</button>
+                        <button id="btn-exp" class="px-4 py-2 rounded-md bg-white border border-slate-300 text-slate-700 font-medium transition-all hover:bg-slate-50">\(f(x) = e^x\)</button>
+                    </div>
+
+                    <div class="mt-8">
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="text-sm font-semibold text-slate-700">展开阶数 \(n\)</label>
+                            <span id="n-value" class="text-blue-600 font-bold text-lg">1</span>
+                        </div>
+                        <input type="range" id="order-slider" min="1" max="15" value="1" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer slider-thumb">
+                        <div class="flex justify-between text-[10px] text-slate-400 mt-1">
+                            <span>1</span>
+                            <span>15</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-panel p-6 rounded-xl border border-slate-200 shadow-sm">
+                    <h2 class="text-sm font-semibold text-slate-700 mb-3">数学原理</h2>
+                    <div class="text-xs text-slate-600 space-y-2 leading-relaxed">
+                        <p>泰勒多项式在 \(x=a\) 处展开：</p>
+                        <p>\[P_n(x) = \sum_{k=0}^n \frac{f^{(k)}(a)}{k!}(x-a)^k\]</p>
+                        <p>当 \(n\) 增加，高阶导数项逐步修正远离中心点的偏差，使得曲线愈发贴合原函数。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Visualization -->
+            <div class="lg:col-span-3 space-y-6">
+                <div class="canvas-container" id="container">
+                    <canvas id="plotCanvas"></canvas>
+                </div>
+
+                <!-- Formula Display -->
+                <div class="control-panel p-6 rounded-xl border border-slate-200 shadow-sm min-h-[100px] flex items-center justify-center overflow-x-auto">
+                    <div id="formula-output" class="text-lg text-slate-800"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('plotCanvas');
+        const ctx = canvas.getContext('2d');
+        const container = document.getElementById('container');
+        const slider = document.getElementById('order-slider');
+        const nDisplay = document.getElementById('n-value');
+        const btnSin = document.getElementById('btn-sin');
+        const btnExp = document.getElementById('btn-exp');
+        const formulaOutput = document.getElementById('formula-output');
+
+        let state = {
+            mode: 'sin', // 'sin' or 'exp'
+            n: 1,
+            width: 0,
+            height: 0,
+            origin: { x: 0, y: 0 },
+            scale: 50 // Pixels per unit
+        };
+
+        function initCanvas() {
+            state.width = container.clientWidth;
+            state.height = container.clientHeight;
+            canvas.width = state.width;
+            canvas.height = state.height;
+            state.origin.x = state.width / 2;
+            state.origin.y = state.height / 2;
+            
+            // Adjust scale based on function
+            state.scale = state.mode === 'sin' ? state.height / 6 : state.height / 10;
+            draw();
+        }
+
+        function factorial(k) {
+            if (k <= 1) return 1;
+            let res = 1;
+            for (let i = 2; i <= k; i++) res *= i;
+            return res;
+        }
+
+        // Target Functions
+        const targets = {
+            sin: (x) => Math.sin(x),
+            exp: (x) => Math.exp(x)
+        };
+
+        // Taylor Polynomial Calculation
+        function taylor(x, n, mode) {
+            let sum = 0;
+            if (mode === 'sin') {
+                // Sin expansion: sum_{k=0 to n-1} (-1)^k * x^(2k+1) / (2k+1)!
+                // Here n is interpreted as the number of terms to make it visual
+                for (let k = 0; k < n; k++) {
+                    const exponent = 2 * k + 1;
+                    const term = Math.pow(-1, k) * Math.pow(x, exponent) / factorial(exponent);
+                    sum += term;
+                }
+            } else {
+                // Exp expansion: sum_{k=0 to n} x^k / k!
+                for (let k = 0; k <= n; k++) {
+                    const term = Math.pow(x, k) / factorial(k);
+                    sum += term;
+                }
+            }
+            return sum;
+        }
+
+        function updateFormula() {
+            let tex = "";
+            if (state.mode === 'sin') {
+                tex = "P(x) = ";
+                for (let k = 0; k < state.n; k++) {
+                    const exp = 2 * k + 1;
+                    const sign = k === 0 ? "" : (k % 2 === 0 ? " + " : " - ");
+                    const term = exp === 1 ? "x" : `\\frac{x^{${exp}}}{${exp}!}`;
+                    tex += sign + term;
+                    if (k === 4 && state.n > 5) { tex += " + \\dots"; break; }
+                }
+            } else {
+                tex = "P(x) = ";
+                for (let k = 0; k <= state.n; k++) {
+                    const sign = k === 0 ? "" : " + ";
+                    let term = "";
+                    if (k === 0) term = "1";
+                    else if (k === 1) term = "x";
+                    else term = `\\frac{x^{${k}}}{${k}!}`;
+                    
+                    tex += sign + term;
+                    if (k === 5 && state.n > 6) { tex += " + \\dots"; break; }
+                }
+            }
+            formulaOutput.innerHTML = `\\[${tex}\\]`;
+            // Trigger potential KaTeX re-render if it were a library, 
+            // but we use the prompt's instruction for static markers.
+        }
+
+        function toScreen(x, y) {
+            return {
+                x: state.origin.x + x * state.scale,
+                y: state.origin.y - y * state.scale
+            };
+        }
+
+        function drawGrid() {
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 1;
+
+            // Vertical lines
+            for (let x = -10; x <= 10; x++) {
+                const pos = toScreen(x, 0);
+                ctx.beginPath();
+                ctx.moveTo(pos.x, 0);
+                ctx.lineTo(pos.x, state.height);
+                ctx.stroke();
+            }
+
+            // Horizontal lines
+            for (let y = -10; y <= 10; y++) {
+                const pos = toScreen(0, y);
+                ctx.beginPath();
+                ctx.moveTo(0, pos.y);
+                ctx.lineTo(state.width, pos.y);
+                ctx.stroke();
+            }
+
+            // Axes
+            ctx.strokeStyle = '#94a3b8';
+            ctx.lineWidth = 2;
+            
+            ctx.beginPath(); // X-axis
+            ctx.moveTo(0, state.origin.y);
+            ctx.lineTo(state.width, state.origin.y);
+            ctx.stroke();
+
+            ctx.beginPath(); // Y-axis
+            ctx.moveTo(state.origin.x, 0);
+            ctx.lineTo(state.origin.x, state.height);
+            ctx.stroke();
+            
+            // Origin marker
+            ctx.fillStyle = '#64748b';
+            ctx.font = '12px Inter, sans-serif';
+            ctx.fillText('0', state.origin.x + 5, state.origin.y + 15);
+        }
+
+        function drawCurve(fn, color, width, isDashed = false) {
+            ctx.beginPath();
+            ctx.strokeStyle = color;
+            ctx.lineWidth = width;
+            if (isDashed) ctx.setLineDash([5, 5]);
+            else ctx.setLineDash([]);
+
+            const step = 0.05;
+            const xMin = -state.width / (2 * state.scale);
+            const xMax = state.width / (2 * state.scale);
+
+            let first = true;
+            for (let x = xMin; x <= xMax; x += step) {
+                const y = fn(x);
+                const pos = toScreen(x, y);
+                
+                if (pos.y < -100 || pos.y > state.height + 100) {
+                    first = true;
+                    continue;
+                }
+
+                if (first) {
+                    ctx.moveTo(pos.x, pos.y);
+                    first = false;
+                } else {
+                    ctx.lineTo(pos.x, pos.y);
+                }
+            }
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, state.width, state.height);
+            drawGrid();
+
+            // Draw Target Function (Static/Background)
+            drawCurve(targets[state.mode], '#94a3b8', 2, true);
+
+            // Draw Taylor Polynomial (Active)
+            drawCurve((x) => taylor(x, state.n, state.mode), '#2563eb', 3, false);
+
+            // Origin Point Highlight
+            const center = toScreen(0, state.mode === 'sin' ? 0 : 1);
+            ctx.fillStyle = '#ef4444';
+            ctx.beginPath();
+            ctx.arc(center.x, center.y, 4, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // Event Listeners
+        slider.addEventListener('input', (e) => {
+            state.n = parseInt(e.target.value);
+            nDisplay.innerText = state.n;
+            updateFormula();
+            draw();
+        });
+
+        btnSin.addEventListener('click', () => {
+            state.mode = 'sin';
+            btnSin.className = "px-4 py-2 rounded-md bg-blue-600 text-white font-medium transition-all hover:bg-blue-700";
+            btnExp.className = "px-4 py-2 rounded-md bg-white border border-slate-300 text-slate-700 font-medium transition-all hover:bg-slate-50";
+            slider.max = 12; // Limit sin to 12 terms (power 23)
+            initCanvas();
+            updateFormula();
+        });
+
+        btnExp.addEventListener('click', () => {
+            state.mode = 'exp';
+            btnExp.className = "px-4 py-2 rounded-md bg-blue-600 text-white font-medium transition-all hover:bg-blue-700";
+            btnSin.className = "px-4 py-2 rounded-md bg-white border border-slate-300 text-slate-700 font-medium transition-all hover:bg-slate-50";
+            slider.max = 15;
+            initCanvas();
+            updateFormula();
+        });
+
+        window.addEventListener('resize', initCanvas);
+
+        // Initial Start
+        initCanvas();
+        updateFormula();
+
+    </script>
+</body>
+</html>

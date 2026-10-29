@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>梯度下降 · 互动小实验</title>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js" onerror="document.documentElement.classList.add('three-failed')"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <style>
+    :root { --ink:#eaf1ff; --muted:#9baccc; --line:rgba(255,255,255,.12); --panel:rgba(11,18,39,.83); --accent:#ff9f43; }
+    * { box-sizing:border-box } body { margin:0; min-height:100vh; overflow:hidden; color:var(--ink); font-family:Inter,"PingFang SC","Microsoft YaHei",sans-serif; background:#071126; }
+    #scene { position:fixed; inset:0; z-index:0 } .vignette { position:fixed; inset:0; z-index:1; pointer-events:none; background:radial-gradient(circle at 50% 46%,transparent 22%,rgba(3,7,19,.36) 100%); }
+    header { position:fixed; z-index:3; top:26px; left:34px; display:flex; align-items:center; gap:13px; } .logo { width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#ffb053,#ff664d); display:grid;place-items:center;box-shadow:0 8px 22px #ff7a3b55; font-size:19px; }
+    h1 { font-size:18px;letter-spacing:.02em;margin:0;font-weight:700 } header p { margin:3px 0 0;color:var(--muted);font-size:12px }
+    .card { background:var(--panel); border:1px solid var(--line); box-shadow:0 18px 50px rgba(0,0,0,.25); backdrop-filter:blur(12px); border-radius:16px; }
+    .guide { position:fixed; z-index:3; top:97px; left:34px; width:268px; padding:18px 18px 15px; } .eyebrow { margin:0 0 8px; color:#72d8ff; font-size:11px; font-weight:700; letter-spacing:.12em; }
+    .guide h2 { font-size:18px;line-height:1.35;margin:0 0 16px; } .steps { border-left:1px solid #52617c; margin-left:7px; padding-left:18px; } .step { position:relative; padding:0 0 16px; color:var(--muted);font-size:12px;line-height:1.55; } .step:last-child{padding-bottom:0}.step:before { content:"";position:absolute;width:9px;height:9px;border-radius:50%;left:-23px;top:5px;background:#60708d;border:2px solid #111d37 }.step.active{color:#eef5ff}.step.active:before{background:var(--accent);box-shadow:0 0 0 5px #ff9e4330}.step strong{color:#fff;display:block;font-size:13px;margin-bottom:1px}
+    .tip { position:fixed; z-index:3; left:50%; bottom:29px; transform:translateX(-50%); padding:10px 15px; color:#b8c8e7; font-size:12px; white-space:nowrap; }.tip b{color:#fff;font-weight:600}
+    .controls { position:fixed;z-index:3;right:34px;top:26px;width:300px;padding:19px; }.controls h2 { font-size:14px;margin:0 0 16px;display:flex;justify-content:space-between;align-items:center }.badge{font-size:10px;color:#81e2a6;background:#4acf7622;padding:4px 7px;border-radius:8px;letter-spacing:.04em}.buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:17px}button{border:0;border-radius:9px;padding:10px 9px;background:#26344f;color:#eaf1ff;font:600 12px inherit;cursor:pointer;transition:.18s}button:hover{background:#344768;transform:translateY(-1px)}button.primary{background:linear-gradient(110deg,#ffaf52,#fa714e);color:#28130d}.control{border-top:1px solid var(--line);padding:13px 0 1px}.control label{display:flex;justify-content:space-between;font-size:12px;color:#bccae3;margin-bottom:9px}.control output{font-weight:700;color:#fff}input[type=range]{width:100%;accent-color:#ff9948}.readout{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:15px}.metric{padding:11px 10px;border-radius:10px;background:#ffffff0b}.metric span{font-size:10px;color:#94a7ca;display:block;margin-bottom:4px}.metric b{font-size:17px;color:#fff}.message { margin:13px 0 0;padding:10px 11px;min-height:52px;border-radius:10px;background:#73d8ff12;border:1px solid #73d8ff1c;color:#bdcce7;font-size:12px;line-height:1.45}.message b{color:#7bddff}
+    #error { display:none;position:fixed;inset:0;z-index:10;place-items:center;background:#071126;color:#fff;text-align:center;padding:20px}.three-failed #error{display:grid}.three-failed #app{display:none}
+    @media(max-width:760px){ body{overflow:auto}.guide{top:82px;left:12px;width:220px}.controls{top:auto;bottom:14px;right:12px;width:min(300px,calc(100% - 24px));padding:14px}.tip{display:none}header{top:15px;left:14px}.guide h2{font-size:15px}.steps{display:none}.buttons{margin-bottom:8px}.readout{margin-top:8px}.message{display:none} }
+  </style>
+</head>
+<body>
+  <div id="error"><div><h1>无法加载 3D 引擎</h1><p>请检查网络连接后刷新页面。这个单文件教程通过 CDN 加载 Three.js。</p></div></div>
+  <main id="app">
+    <div id="scene"></div><div class="vignette"></div>
+    <header><div class="logo">↘</div><div><h1>梯度下降实验室</h1><p>让小球沿着最陡的下坡，找到山谷最低处</p></div></header>
+    <section class="guide card"><p class="eyebrow">只需理解三件事</p><h2>像下山一样，<br>一点点变得更好。</h2><div class="steps"><div class="step active"><strong>1. 选一个起点</strong>点击山坡，把小球放到任意位置。</div><div class="step"><strong>2. 看下坡方向</strong>梯度告诉我们哪里最陡；反方向就是下坡。</div><div class="step"><strong>3. 走一小步，重复</strong>每次下降一点，最终接近谷底。</div></div></section>
+    <section class="controls card"><h2>控制台 <span class="badge" id="status">准备好了</span></h2><div class="buttons"><button class="primary" id="run">▶ 开始下山</button><button id="step">单步执行</button><button id="reset">↺ 重置</button><button id="random">✦ 随机起点</button></div><div class="control"><label>每一步走多远（学习率）<output id="lrVal">0.30</output></label><input id="lr" type="range" min="0.05" max="3.00" step="0.05" value="0.30"></div><div class="control"><label>动画速度 <output id="speedVal">中等</output></label><input id="speed" type="range" min="1" max="3" step="1" value="2"></div><div class="readout"><div class="metric"><span>已经走了</span><b id="iteration">0 步</b></div><div class="metric"><span>当前高度（损失）</span><b id="loss">—</b></div></div><div class="message" id="message"><b>试试看：</b>点击山坡选择起点，再按“开始下山”。</div></section>
+    <div class="tip card"><b>操作提示：</b>拖动旋转视角 · 滚轮缩放 · 点击山坡更换起点</div>
+  </main>
+  <script>
+  window.addEventListener('load', () => {
+    if (!window.THREE || !THREE.OrbitControls) return;
+    const $ = id => document.getElementById(id), sceneEl = $('scene');
+    const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(42, innerWidth/innerHeight, .1, 100), renderer = new THREE.WebGLRenderer({antialias:true,alpha:true});
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2)); renderer.setSize(innerWidth, innerHeight); renderer.outputEncoding = THREE.sRGBEncoding; sceneEl.appendChild(renderer.domElement);
+    camera.position.set(10,10,12); const controls = new THREE.OrbitControls(camera,renderer.domElement); controls.target.set(0,2.2,0); controls.enableDamping=true; controls.dampingFactor=.06; controls.minDistance=7; controls.maxDistance=25;
+    scene.add(new THREE.HemisphereLight(0x9ecaff,0x061021,1.75)); const sun=new THREE.DirectionalLight(0xfff0d5,1.2);sun.position.set(-5,10,4);scene.add(sun);
+    const loss=(x,z)=>.4*(x*x+z*z), gradient=(x,z)=>({x:.8*x,z:.8*z});
+    const size=14, segments=100, geo=new THREE.PlaneGeometry(size,size,segments,segments); geo.rotateX(-Math.PI/2); const pos=geo.attributes.position, colors=[];
+    for(let i=0;i<pos.count;i++){const x=pos.getX(i),z=pos.getZ(i),y=loss(x,z);pos.setY(i,y);const t=Math.min(y/22,1), col=new THREE.Color().setHSL(.57-t*.54,.78,.43+t*.17);colors.push(col.r,col.g,col.b)} geo.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));geo.computeVertexNormals();
+    const mountain=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({vertexColors:true,roughness:.72,metalness:.04,side:THREE.DoubleSide}));scene.add(mountain);
+    const grid=new THREE.GridHelper(14,14,0x7bdfff,0x25517c);grid.position.y=.015;grid.material.transparent=true;grid.material.opacity=.18;scene.add(grid);
+    const bottom=new THREE.Mesh(new THREE.CylinderGeometry(.32,.42,.12,32),new THREE.MeshStandardMaterial({color:0x80e8c0,emissive:0x1a805a,emissiveIntensity:.6}));bottom.position.y=.08;scene.add(bottom);
+    const ball=new THREE.Mesh(new THREE.SphereGeometry(.29,32,24),new THREE.MeshStandardMaterial({color:0xff963e,emissive:0xff4b24,emissiveIntensity:.5,roughness:.3}));scene.add(ball);
+    const ring=new THREE.Mesh(new THREE.TorusGeometry(.4,.026,10,40),new THREE.MeshBasicMaterial({color:0xffd083,transparent:true,opacity:.85}));ring.rotation.x=Math.PI/2;scene.add(ring);
+    let point={x:4.9,z:-3.7}, initial={...point}, path=[], running=false, iteration=0, lastStep=0;
+    const pathLine=new THREE.Line(new THREE.BufferGeometry(),new THREE.LineBasicMaterial({color:0xffd278,transparent:true,opacity:.94}));scene.add(pathLine);
+    const lr=$('lr'), speed=$('speed');
+    function sync(){const y=loss(point.x,point.z);ball.position.set(point.x,y+.32,point.z);ring.position.set(point.x,y+.055,point.z);$('iteration').textContent=iteration+' 步';$('loss').textContent=y.toFixed(2);const coords=path.flatMap(p=>[p.x,loss(p.x,p.z)+.34,p.z]);pathLine.geometry.setAttribute('position',new THREE.Float32BufferAttribute(coords,3));pathLine.geometry.computeBoundingSphere()}
+    function say(html){$('message').innerHTML=html} function setStatus(text){$('status').textContent=text}
+    function reset(newPoint=initial){running=false;$('run').textContent='▶ 开始下山';point={...newPoint};initial={...newPoint};path=[{...point}];iteration=0;sync();setStatus('准备好了');say('<b>试试看：</b>点击山坡选择起点，再按“开始下山”。')}
+    function doStep(){const before=loss(point.x,point.z), g=gradient(point.x,point.z), rate=+lr.value;point.x-=rate*g.x;point.z-=rate*g.z;point.x=THREE.MathUtils.clamp(point.x,-6.8,6.8);point.z=THREE.MathUtils.clamp(point.z,-6.8,6.8);iteration++;path.push({...point});const after=loss(point.x,point.z);sync();if(after<.006){running=false;$('run').textContent='▶ 再来一次';setStatus('接近谷底');say('<b>做得好！</b>小球已经非常接近最低点。此时梯度几乎为 0，所以不需要再移动。');return}if(after>before*1.01){say('<b>注意：</b>这一步没有变低。学习率有点大，小球跨过谷底，正在两侧来回跳。试着调小它。')}else say('<b>第 '+iteration+' 步：</b>沿反梯度走了一步，高度从 '+before.toFixed(2)+' 降到 '+after.toFixed(2)+'。');setStatus('正在下山')}
+    $('run').onclick=()=>{running=!running;$('run').textContent=running?'❚❚ 暂停':'▶ 继续下山';if(running)setStatus('正在下山')};$('step').onclick=()=>{running=false;$('run').textContent='▶ 继续下山';doStep()};$('reset').onclick=()=>reset();$('random').onclick=()=>reset({x:(Math.random()*11-5.5),z:(Math.random()*11-5.5)});
+    lr.oninput=()=>{$('lrVal').textContent=(+lr.value).toFixed(2)};speed.oninput=()=>{$('speedVal').textContent=['慢速','中等','快速'][speed.value-1]};
+    const raycaster=new THREE.Raycaster(), mouse=new THREE.Vector2();renderer.domElement.addEventListener('pointerdown',e=>{mouse.x=e.clientX/innerWidth*2-1;mouse.y=-(e.clientY/innerHeight)*2+1;raycaster.setFromCamera(mouse,camera);const hit=raycaster.intersectObject(mountain)[0];if(hit){reset({x:hit.point.x,z:hit.point.z});say('<b>新起点已放好。</b>现在小球位于山坡上，按“开始下山”观察它怎么找路。')}});
+    addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});reset();
+    function animate(t){requestAnimationFrame(animate);controls.update();if(running&&t-lastStep>([850,400,150][speed.value-1])){lastStep=t;doStep()}renderer.render(scene,camera)}animate(0);
+  });
+  </script>
+</body>
+</html>
