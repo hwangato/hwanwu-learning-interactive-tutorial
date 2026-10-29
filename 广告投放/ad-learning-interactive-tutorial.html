@@ -1,0 +1,1728 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>30 天广告投放互动教程</title>
+  <style>
+    :root {
+      --bg: #f7f8f5;
+      --panel: #ffffff;
+      --ink: #1b1d1b;
+      --muted: #636860;
+      --line: #dfe4dc;
+      --accent: #0f766e;
+      --accent-2: #f59e0b;
+      --accent-3: #2563eb;
+      --danger: #dc2626;
+      --soft: #e8f3ef;
+      --soft-2: #fff3d6;
+      --shadow: 0 18px 50px rgba(26, 35, 31, .08);
+      --radius: 8px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--sans);
+      line-height: 1.55;
+      letter-spacing: 0;
+      overflow-x: hidden;
+    }
+
+    button, input, textarea, select {
+      font: inherit;
+    }
+
+    button {
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: var(--panel);
+      color: var(--ink);
+      cursor: pointer;
+    }
+
+    button:hover { border-color: #aeb8ad; }
+    button:focus, input:focus, textarea:focus, select:focus {
+      outline: 3px solid rgba(15, 118, 110, .18);
+      outline-offset: 1px;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      min-width: 0;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: auto;
+      min-width: 0;
+      padding: 20px;
+      background: #eef2eb;
+      border-right: 1px solid var(--line);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .mark {
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      background:
+        linear-gradient(135deg, rgba(15, 118, 110, .98), rgba(37, 99, 235, .9));
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-weight: 800;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 19px;
+      line-height: 1.18;
+    }
+
+    .brand p {
+      margin: 2px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .overall {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px;
+      margin-bottom: 16px;
+    }
+
+    .progress-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .bar {
+      width: 100%;
+      height: 10px;
+      border-radius: 999px;
+      background: #e1e6df;
+      overflow: hidden;
+    }
+
+    .bar span {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: var(--accent);
+      transition: width .2s ease;
+    }
+
+    .stage-title {
+      margin: 18px 0 8px;
+      color: #3d443c;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .day-list {
+      display: grid;
+      gap: 6px;
+    }
+
+    .day-btn {
+      display: grid;
+      grid-template-columns: 40px minmax(0, 1fr) 24px;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      min-width: 0;
+      padding: 9px;
+      text-align: left;
+      border-radius: 7px;
+      background: rgba(255, 255, 255, .62);
+    }
+
+    .day-btn.active {
+      background: #fff;
+      border-color: var(--accent);
+      box-shadow: 0 6px 18px rgba(15, 118, 110, .09);
+    }
+
+    .day-num {
+      width: 30px;
+      height: 30px;
+      border-radius: 7px;
+      display: grid;
+      place-items: center;
+      background: #dfe8e4;
+      color: #24413d;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .day-name {
+      min-width: 0;
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .day-sub {
+      font-size: 11px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .check-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 1px solid #b6c2b7;
+      background: #fff;
+    }
+
+    .day-btn.done .check-dot {
+      background: var(--accent);
+      border-color: var(--accent);
+      position: relative;
+    }
+
+    .day-btn.done .check-dot::after {
+      content: "";
+      position: absolute;
+      width: 8px;
+      height: 4px;
+      border-left: 2px solid #fff;
+      border-bottom: 2px solid #fff;
+      transform: rotate(-45deg);
+      left: 4px;
+      top: 5px;
+    }
+
+    main {
+      min-width: 0;
+      width: 100%;
+      padding: 28px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      padding: 8px 11px;
+      font-size: 13px;
+      font-weight: 700;
+      background: #fff;
+    }
+
+    .tab.active {
+      color: #fff;
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .primary {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+      font-weight: 800;
+    }
+
+    .danger {
+      color: var(--danger);
+    }
+
+    .hero {
+      border-radius: var(--radius);
+      background: #fff;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin-bottom: 18px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(280px, .8fr);
+      gap: 0;
+    }
+
+    .hero-copy {
+      padding: 28px;
+      min-width: 0;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      max-width: 100%;
+      padding: 5px 8px;
+      border-radius: 999px;
+      background: var(--soft);
+      color: #115e59;
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+
+    h2, h3, h4 { line-height: 1.18; }
+    h2 {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 44px);
+      max-width: 920px;
+      overflow-wrap: anywhere;
+    }
+
+    .lead {
+      margin: 12px 0 0;
+      color: var(--muted);
+      max-width: 780px;
+      font-size: 16px;
+      overflow-wrap: anywhere;
+    }
+
+    .funnel-visual {
+      min-height: 310px;
+      padding: 28px 22px;
+      background: #f3f6ef;
+      border-left: 1px solid var(--line);
+      display: grid;
+      align-content: center;
+      gap: 10px;
+    }
+
+    .funnel-step {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 7px;
+      min-height: 44px;
+      display: grid;
+      align-items: center;
+      justify-items: center;
+      color: #29302a;
+      font-weight: 800;
+      font-size: 13px;
+      margin-inline: auto;
+      box-shadow: 0 8px 20px rgba(29, 41, 36, .06);
+    }
+
+    .funnel-step:nth-child(1) { width: 96%; }
+    .funnel-step:nth-child(2) { width: 84%; }
+    .funnel-step:nth-child(3) { width: 72%; }
+    .funnel-step:nth-child(4) { width: 60%; }
+    .funnel-step:nth-child(5) { width: 48%; background: #eaf6f3; border-color: #9bd1ca; }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .metric {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px;
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 24px;
+      line-height: 1.1;
+      margin-top: 5px;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .view { display: none; }
+    .view.active { display: block; }
+
+    .panel {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin-bottom: 18px;
+    }
+
+    .panel-head {
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .panel-head h3 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    .panel-head p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .panel-body {
+      padding: 20px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 14px;
+      background: #fff;
+    }
+
+    .box.soft { background: var(--soft); }
+    .box.warn { background: var(--soft-2); }
+    .box h4 {
+      margin: 0 0 8px;
+      font-size: 15px;
+    }
+
+    .box ul, .box ol {
+      margin: 8px 0 0;
+      padding-left: 20px;
+    }
+
+    .box li { margin: 4px 0; }
+
+    .timeline {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      gap: 10px;
+    }
+
+    .time-slot {
+      border-left: 4px solid var(--accent);
+      background: #f9fbf7;
+      border-radius: 7px;
+      padding: 12px;
+      border-top: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .time-slot strong {
+      display: block;
+      font-size: 13px;
+    }
+
+    .time-slot span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .practice {
+      display: grid;
+      gap: 12px;
+    }
+
+    label {
+      display: block;
+      color: #363d36;
+      font-size: 13px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    textarea, input, select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #fff;
+      color: var(--ink);
+      padding: 10px 11px;
+    }
+
+    textarea {
+      min-height: 92px;
+      resize: vertical;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 8px;
+    }
+
+    .check-item {
+      display: grid;
+      grid-template-columns: 22px 1fr;
+      gap: 8px;
+      align-items: start;
+      padding: 9px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #fff;
+    }
+
+    .check-item input {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      accent-color: var(--accent);
+    }
+
+    .check-item span {
+      font-size: 14px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #eef2eb;
+      color: #4a534a;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .resource-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      overflow: hidden;
+      border-radius: 7px;
+    }
+
+    th, td {
+      border: 1px solid var(--line);
+      padding: 10px;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    th {
+      background: #f0f3ee;
+      font-size: 12px;
+      color: #495149;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 12px;
+    }
+
+    .asset-card {
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 14px;
+      background: #fff;
+      min-height: 160px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .ad-preview {
+      border: 1px solid #cad3c9;
+      border-radius: 7px;
+      background: #f8faf7;
+      overflow: hidden;
+    }
+
+    .ad-image {
+      height: 92px;
+      background:
+        linear-gradient(90deg, rgba(15,118,110,.18), rgba(245,158,11,.18)),
+        repeating-linear-gradient(135deg, #ffffff, #ffffff 10px, #edf2ec 10px, #edf2ec 20px);
+      display: grid;
+      place-items: center;
+      color: #24524d;
+      font-weight: 900;
+    }
+
+    .ad-copy {
+      padding: 10px;
+      font-size: 13px;
+    }
+
+    .ad-copy strong { display: block; margin-bottom: 3px; }
+
+    .calculator {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .result {
+      background: #f6f8f4;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 12px;
+    }
+
+    .result span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .result strong {
+      display: block;
+      font-size: 22px;
+      margin-top: 3px;
+    }
+
+    .radar {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 20px;
+      align-items: center;
+    }
+
+    canvas {
+      max-width: 100%;
+      border-radius: 7px;
+      background: #f8faf7;
+      border: 1px solid var(--line);
+    }
+
+    .score-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .score-row {
+      display: grid;
+      grid-template-columns: 110px 1fr 44px;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .score-row input {
+      accent-color: var(--accent);
+    }
+
+    .templates-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
+    }
+
+    .template {
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 14px;
+      background: #fff;
+    }
+
+    .template pre {
+      white-space: pre-wrap;
+      word-break: break-word;
+      margin: 10px 0 0;
+      padding: 12px;
+      background: #f4f6f2;
+      border-radius: 7px;
+      font-family: var(--mono);
+      font-size: 12px;
+    }
+
+    .footer-note {
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+      padding: 18px 0 6px;
+    }
+
+    @media (max-width: 1040px) {
+      .app { display: block; }
+      .sidebar {
+        position: static;
+        height: auto;
+        max-height: 460px;
+        max-width: 100%;
+        overflow-x: hidden;
+      }
+      main { padding: 18px; max-width: 100vw; overflow-x: hidden; }
+      .hero-grid, .calculator, .radar { grid-template-columns: 1fr; }
+      .funnel-visual { border-left: 0; border-top: 1px solid var(--line); }
+      .dashboard { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 680px) {
+      .grid-2, .grid-3, .dashboard, .calc-grid, .result-grid { grid-template-columns: 1fr; }
+      .timeline { grid-template-columns: 1fr; }
+      .topbar { align-items: stretch; flex-direction: column; }
+      .actions { justify-content: flex-start; }
+      .hero-copy { padding: 20px; }
+      .panel-head { flex-direction: column; }
+      .score-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="mark">AD</div>
+        <div>
+          <h1>30 天广告投放互动教程</h1>
+          <p>约 90 小时 · 每天 20:00-23:00</p>
+        </div>
+      </div>
+      <div class="overall">
+        <div class="progress-row">
+          <span>总进度</span>
+          <strong id="overallText">0 / 30 天</strong>
+        </div>
+        <div class="bar"><span id="overallBar"></span></div>
+      </div>
+      <div id="dayNav"></div>
+    </aside>
+
+    <main>
+      <div class="topbar">
+        <div class="tabs" role="tablist" aria-label="教程视图">
+          <button class="tab active" data-view="learn">今日教程</button>
+          <button class="tab" data-view="tools">工具台</button>
+          <button class="tab" data-view="templates">模板库</button>
+          <button class="tab" data-view="portfolio">毕业项目</button>
+        </div>
+        <div class="actions">
+          <button id="exportBtn">导出学习记录</button>
+          <button id="resetBtn" class="danger">清空本地记录</button>
+        </div>
+      </div>
+
+      <section class="hero">
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <div class="eyebrow">产品/内容定位 → 人群洞察 → 素材 → 落地页 → 埋点 → 测试 → 复盘 → 放量</div>
+            <h2>把广告学习变成可复用的商业闭环</h2>
+            <p class="lead">这不是后台按钮教程，而是一套 30 天投放训练系统。你每天完成一个明确产出，逐步建立从项目选择、渠道判断、素材测试、数据分析到 SOP 沉淀的能力。</p>
+          </div>
+          <div class="funnel-visual" aria-label="广告投放闭环漏斗">
+            <div class="funnel-step">人群与需求</div>
+            <div class="funnel-step">素材与广告角度</div>
+            <div class="funnel-step">落地页与转化</div>
+            <div class="funnel-step">数据与复盘</div>
+            <div class="funnel-step">优化与放量</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="dashboard">
+        <div class="metric"><span>已完成天数</span><strong id="doneDays">0</strong></div>
+        <div class="metric"><span>预计完成产出</span><strong id="assetCount">0</strong></div>
+        <div class="metric"><span>当前阶段</span><strong id="currentStage">1</strong></div>
+        <div class="metric"><span>能力平均分</span><strong id="avgScore">0</strong></div>
+      </section>
+
+      <section id="learn" class="view active">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <h3 id="dayTitle">Day 1</h3>
+              <p id="dayGoal"></p>
+            </div>
+            <span class="pill" id="stagePill"></span>
+          </div>
+          <div class="panel-body" id="dayContent"></div>
+        </div>
+      </section>
+
+      <section id="tools" class="view">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <h3>投放工具台</h3>
+              <p>用简化模型练习预算、CPA、UTM、渠道判断和能力评分。</p>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="grid-2">
+              <div class="box soft">
+                <h4>渠道选择速查</h4>
+                <table class="resource-table">
+                  <thead><tr><th>项目</th><th>优先渠道</th><th>第一目标</th></tr></thead>
+                  <tbody>
+                    <tr><td>AI 工具 / SaaS</td><td>Google Search → PMax → Meta</td><td>搜索意图验证、注册或等待名单</td></tr>
+                    <tr><td>课程 / 知识付费</td><td>小红书 → Meta → 巨量 / 抖音</td><td>内容信任、留资或私域承接</td></tr>
+                    <tr><td>电商 / 跨境测品</td><td>TikTok → Meta → Shopping / PMax</td><td>素材爆发、加购、购买</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="box warn">
+                <h4>数据诊断卡</h4>
+                <table class="resource-table">
+                  <thead><tr><th>现象</th><th>优先检查</th></tr></thead>
+                  <tbody>
+                    <tr><td>CTR 低</td><td>前 3 秒钩子、封面、标题、人群匹配</td></tr>
+                    <tr><td>CPC 高</td><td>竞争、相关性、素材质量、定向过窄</td></tr>
+                    <tr><td>点击多无转化</td><td>首屏承诺、CTA、价格、信任证明、加载速度</td></tr>
+                    <tr><td>CPA 高</td><td>素材、落地页、客单价、后端成交链路</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="panel" style="box-shadow:none;margin-top:16px">
+              <div class="panel-head">
+                <div><h3>预算与盈利计算器</h3><p>输入一个小预算实验，快速判断样本量和盈亏压力。</p></div>
+              </div>
+              <div class="panel-body calculator">
+                <div class="calc-grid">
+                  <div><label>预算（元）</label><input id="budget" type="number" value="500" min="0"></div>
+                  <div><label>CPM（元）</label><input id="cpm" type="number" value="40" min="0"></div>
+                  <div><label>CTR（%）</label><input id="ctr" type="number" value="1.5" min="0" step="0.1"></div>
+                  <div><label>CVR（%）</label><input id="cvr" type="number" value="3" min="0" step="0.1"></div>
+                  <div><label>客单价（元）</label><input id="aov" type="number" value="99" min="0"></div>
+                  <div><label>毛利率（%）</label><input id="margin" type="number" value="80" min="0" max="100"></div>
+                </div>
+                <div class="result-grid">
+                  <div class="result"><span>预计曝光</span><strong id="rImpressions">0</strong></div>
+                  <div class="result"><span>预计点击</span><strong id="rClicks">0</strong></div>
+                  <div class="result"><span>预计转化</span><strong id="rConv">0</strong></div>
+                  <div class="result"><span>预计 CPA</span><strong id="rCpa">0</strong></div>
+                  <div class="result"><span>预计收入</span><strong id="rRevenue">0</strong></div>
+                  <div class="result"><span>毛利后盈亏</span><strong id="rProfit">0</strong></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid-2">
+              <div class="box">
+                <h4>UTM 生成器</h4>
+                <div class="practice">
+                  <div><label>Source</label><input id="utmSource" value="meta"></div>
+                  <div><label>Medium</label><input id="utmMedium" value="cpc"></div>
+                  <div><label>Campaign</label><input id="utmCampaign" value="ai_english_test_001"></div>
+                  <div><label>Content</label><input id="utmContent" value="video_hook_01"></div>
+                  <div><label>最终 UTM</label><textarea id="utmOutput" readonly></textarea></div>
+                </div>
+              </div>
+              <div class="box">
+                <h4>能力雷达评分</h4>
+                <div class="radar">
+                  <canvas id="radar" width="260" height="260"></canvas>
+                  <div class="score-list" id="scoreList"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="templates" class="view">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <h3>模板库</h3>
+              <p>这些模板对应 30 天结束时需要沉淀的核心资产。</p>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="templates-grid" id="templatesGrid"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="portfolio" class="view">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <h3>毕业项目工作台</h3>
+              <p>用同一个真实项目贯穿 30 天，最终形成可复用案例。</p>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="grid-2">
+              <div class="box soft">
+                <h4>推荐实战样本</h4>
+                <p>优先使用 LinguaTutor AI / AI 英语学习网站。它痛点明确，素材好做，可同时测试 Google 搜索、小红书、Meta，并能用“免费体验课 / 等待名单 / 学习模板”降低首轮转化门槛。</p>
+              </div>
+              <div class="box warn">
+                <h4>首月预算建议</h4>
+                <p>训练技能时，首月 1000-3000 元足够。第 1 轮 300-500 元，第 2 轮 500-1000 元，第 3 轮 1000-3000 元。重点是买到真实反馈，不是第一月就追求盈利。</p>
+              </div>
+            </div>
+            <div class="practice" style="margin-top:14px">
+              <div><label>项目名称</label><input data-portfolio="project" placeholder="例如 LinguaTutor AI"></div>
+              <div><label>目标用户</label><textarea data-portfolio="audience" placeholder="谁会买，在哪个场景触发需求"></textarea></div>
+              <div><label>渠道选择</label><textarea data-portfolio="channels" placeholder="主渠道、备选渠道、选择理由"></textarea></div>
+              <div><label>素材矩阵</label><textarea data-portfolio="assets" placeholder="3 个角度 × 3 个素材，说明每条素材测试什么"></textarea></div>
+              <div><label>落地页与埋点</label><textarea data-portfolio="landing" placeholder="首屏、CTA、核心事件、UTM 命名"></textarea></div>
+              <div><label>首轮数据与复盘结论</label><textarea data-portfolio="review" placeholder="CTR / CPC / CVR / CPA / 结论 / 下一轮动作"></textarea></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <p class="footer-note">所有填写内容都保存在当前浏览器本地。换设备或清空浏览器数据后不会自动同步。</p>
+    </main>
+  </div>
+
+  <script>
+    const stages = [
+      { id: 1, name: "第 1 阶段：底层认知", desc: "建立投放闭环，不急着烧钱", days: [1,2,3,4,5,6,7] },
+      { id: 2, name: "第 2 阶段：平台逻辑", desc: "渠道、账户结构、素材生产", days: [8,9,10,11,12,13,14] },
+      { id: 3, name: "第 3 阶段：真实搭建", desc: "落地页、追踪、小预算测试", days: [15,16,17,18,19,20,21] },
+      { id: 4, name: "第 4 阶段：优化放量", desc: "复盘、预算、SOP、毕业项目", days: [22,23,24,25,26,27,28,29,30] }
+    ];
+
+    const days = [
+      {
+        day: 1, stage: 1, title: "理解广告投放的本质",
+        goal: "用利润公式判断广告不是买流量，而是验证商业闭环。",
+        concept: ["利润 = 流量 × 转化率 × 客单价 × 复购率 - 投放成本", "核心指标：CPM、CPC、CTR、CVR、CPA、ROAS、LTV。", "今天先选定一个真实项目，后面 30 天都围绕它训练。"],
+        tasks: [
+          ["20:00-20:30", "学习广告核心公式，写出每个指标的含义。"],
+          ["20:30-21:30", "选定练习项目，回答我卖什么、卖给谁、为什么现在买、不买原因、可接受 CPA。"],
+          ["21:30-22:30", "建立项目档案：产品、客单价、毛利、目标用户、首个渠道。"],
+          ["22:30-23:00", "写今日复盘：这个项目最大不确定性是什么。"]
+        ],
+        prompts: ["我卖什么？", "卖给谁？", "用户为什么现在要买？", "用户不买的原因是什么？", "我愿意为一个用户花多少钱？"],
+        checklist: ["已选定 1 个真实练习项目", "已写出项目档案", "已估算客单价、毛利和可接受 CPA", "已记录最大不确定性"],
+        deliverable: "项目投放档案 v1"
+      },
+      {
+        day: 2, stage: 1, title: "认识主流投放渠道",
+        goal: "理解不同渠道匹配的用户状态，并为项目选择主渠道和备选渠道。",
+        concept: ["Google Search 适合明确搜索需求。", "Meta 适合消费品、课程、App、内容转化。", "TikTok / 抖音适合短视频种草和低客单转化。", "小红书适合种草、教育、生活方式和信任建设。"],
+        tasks: [
+          ["20:00-20:30", "学习 Google、Meta、TikTok、小红书、巨量、B 站、微信广告的适用场景。"],
+          ["20:30-21:30", "为项目选择 2 个优先渠道，并写选择理由。"],
+          ["21:30-22:30", "拆解 10 条广告，记录钩子、痛点、承诺、CTA、素材形式。"],
+          ["22:30-23:00", "总结哪条广告最想让你点击，以及原因。"]
+        ],
+        prompts: ["主渠道是什么？", "备选渠道是什么？", "用户在这个渠道处于什么状态？", "哪条广告最想让你点击？为什么？"],
+        checklist: ["已选择主渠道和备选渠道", "已拆解 10 条广告", "已填写广告拆解表", "已总结最佳广告样本"],
+        deliverable: "渠道选择记录 + 10 条广告拆解"
+      },
+      {
+        day: 3, stage: 1, title: "用户画像与需求分层",
+        goal: "把用户从人口属性推进到需求、情绪、身份和结果。",
+        concept: ["显性需求：我要学英语。", "隐性需求：我怕自己坚持不下去。", "情绪需求：我想变得更自律。", "身份需求：我想成为 AI 时代会学习的人。", "结果需求：我要考试、出国、涨薪或变现。"],
+        tasks: [
+          ["20:00-20:30", "学习 5 类用户需求。"],
+          ["20:30-21:30", "写 3 类用户画像：刚需型、焦虑型、兴趣型。"],
+          ["21:30-22:30", "写 15 个广告角度。"],
+          ["22:30-23:00", "挑出最有潜力的 3 个角度。"]
+        ],
+        prompts: ["用户 A：刚需型", "用户 B：焦虑型", "用户 C：兴趣型", "最有潜力的 3 个广告角度"],
+        checklist: ["已完成 3 类用户画像", "每类画像包含场景、预算、触发点和顾虑", "已写 15 个广告角度", "已选出 3 个优先角度"],
+        deliverable: "用户画像 + 广告角度池"
+      },
+      {
+        day: 4, stage: 1, title: "广告文案结构",
+        goal: "用固定公式稳定产出标题和短视频脚本。",
+        concept: ["痛点 + 后果 + 解决方案", "结果 + 时间 + 方法", "人群 + 场景 + 利益", "反常识 + 解释 + 行动", "故事 + 转折 + 产品"],
+        tasks: [
+          ["20:00-20:30", "学习 5 个经典文案公式。"],
+          ["20:30-21:30", "写 20 条广告标题。"],
+          ["21:30-22:30", "写 10 条 15-30 秒短视频口播脚本。"],
+          ["22:30-23:00", "选出 3 条最适合投放的脚本。"]
+        ],
+        prompts: ["写 20 条广告标题", "写 10 条短视频口播脚本", "选出 3 条脚本并说明理由"],
+        checklist: ["已使用至少 3 种文案公式", "已写 20 条标题", "已写 10 条脚本", "已选出 3 条首投脚本"],
+        deliverable: "标题库 + 短视频脚本库 v1"
+      },
+      {
+        day: 5, stage: 1, title: "落地页结构",
+        goal: "让用户 5 秒内看懂你卖什么、凭什么、下一步做什么。",
+        concept: ["落地页结构：首屏价值主张、核心痛点、产品机制、用户收益、信任证明、价格/权益、FAQ、CTA。", "首屏要同时讲清人群、结果、方法和行动。", "落地页不是说明书，而是把广告承诺兑现为一个可行动路径。"],
+        tasks: [
+          ["20:00-20:30", "学习落地页基本结构。"],
+          ["20:30-21:30", "拆 3 个落地页：SaaS、课程、电商各 1 个。"],
+          ["21:30-22:30", "为项目写一版落地页文案。"],
+          ["22:30-23:00", "检查 5 秒内是否能看懂你卖什么。"]
+        ],
+        prompts: ["首屏标题", "核心痛点", "3 个用户收益", "信任证明", "FAQ 与 CTA"],
+        checklist: ["已拆 3 个落地页", "已写首屏文案", "已写产品机制和用户收益", "已写 FAQ 和 CTA", "已完成 5 秒测试"],
+        deliverable: "落地页文案 v1"
+      },
+      {
+        day: 6, stage: 1, title: "数据埋点与转化追踪",
+        goal: "理解没有转化追踪就没有优化，并设计基础事件与 UTM 规则。",
+        concept: ["基础事件：PageView、ViewContent、Lead、AddToCart、InitiateCheckout、Purchase、Subscribe。", "广告系统需要转化数据才能优化。", "UTM 是把广告、素材、活动和结果串起来的命名系统。"],
+        tasks: [
+          ["20:00-20:30", "学习转化追踪的意义。"],
+          ["20:30-21:30", "学习基础事件，并判断你的项目需要哪些事件。"],
+          ["21:30-22:30", "设计埋点方案：访问、点击、注册、支付、领取资料等。"],
+          ["22:30-23:00", "建立 UTM 命名规则。"]
+        ],
+        prompts: ["需要追踪的 3 个核心事件", "完整事件路径", "UTM 命名规则", "转化成功标准"],
+        checklist: ["已列出核心事件", "已设计转化路径", "已写 UTM 规则", "已定义成功转化"],
+        deliverable: "埋点方案 + UTM 规则"
+      },
+      {
+        day: 7, stage: 1, title: "第 1 周复盘",
+        goal: "把第一周产物整合成一次完整投放模拟。",
+        concept: ["第 1 周的目标是形成广告闭环草图。", "复盘重点不是写得多，而是能说清楚链路里最不确定的环节。"],
+        tasks: [
+          ["20:00-21:00", "整理项目档案、画像、角度、标题、脚本、落地页、埋点方案。"],
+          ["21:00-22:00", "做一次完整投放模拟。"],
+          ["22:00-23:00", "写第 1 周复盘报告。"]
+        ],
+        prompts: ["准备用哪个渠道？", "投给什么人？", "用什么素材？", "落到哪个页面？", "转化事件是什么？", "预算和成功标准是什么？"],
+        checklist: ["已整理第 1 周产物", "已完成投放模拟", "已写成功标准", "已写第 1 周复盘报告"],
+        deliverable: "第 1 周复盘报告"
+      },
+      {
+        day: 8, stage: 2, title: "Google Ads 搜索广告",
+        goal: "理解搜索广告的高意图逻辑，并搭建关键词与搜索广告素材。",
+        concept: ["用户主动搜索 → 关键词匹配 → 广告展示 → 点击 → 落地页 → 转化。", "关键词可分为品类词、痛点词、对比词、购买词、替代词。", "响应式搜索广告会组合标题和描述，适配不同搜索意图。"],
+        tasks: [
+          ["20:00-20:30", "学习搜索广告链路。"],
+          ["20:30-21:30", "为项目列 50 个关键词。"],
+          ["21:30-22:30", "写 5 组响应式搜索广告素材。"],
+          ["22:30-23:00", "建立否定关键词列表。"]
+        ],
+        prompts: ["品类词", "痛点词", "对比词", "购买词", "否定关键词"],
+        checklist: ["已列 50 个关键词", "已按 5 类分组", "已写 5 组搜索广告", "已建立否定关键词"],
+        deliverable: "Google 搜索关键词表 + RSA 素材"
+      },
+      {
+        day: 9, stage: 2, title: "Google Performance Max / AI 自动化广告",
+        goal: "为 PMax 准备素材包、受众信号和测试方案。",
+        concept: ["PMax 适合电商、SaaS、线索、App 和多渠道获客。", "它围绕转化目标在出价、预算、受众、素材和归因上自动优化。", "PMax 不是少准备素材，而是更需要高质量素材资产。"],
+        tasks: [
+          ["20:00-20:30", "学习 PMax 适用场景。"],
+          ["20:30-21:30", "准备标题、长标题、描述、图片、Logo、视频素材清单。"],
+          ["21:30-22:30", "设计 3 组受众信号：竞品、兴趣、搜索意图。"],
+          ["22:30-23:00", "写出 PMax 测试方案。"]
+        ],
+        prompts: ["15 条标题", "5 条长标题", "5 条描述", "3 组受众信号", "PMax 成功标准"],
+        checklist: ["已准备 PMax 素材清单", "已设计 3 组受众信号", "已写测试预算", "已写成功与停止标准"],
+        deliverable: "PMax 素材包与测试方案"
+      },
+      {
+        day: 10, stage: 2, title: "Meta Ads 基础",
+        goal: "理解 Campaign / Ad Set / Ad 结构和学习期，设计首轮 Meta 测试。",
+        concept: ["Meta 广告结构：Campaign 广告系列、Ad Set 广告组、Ad 广告。", "学习期是系统学习如何交付并获得表现的阶段。", "首轮测试要避免广告组过碎，先让素材和人群获得足够数据。"],
+        tasks: [
+          ["20:00-20:30", "学习 Meta 账户结构。"],
+          ["20:30-21:30", "理解学习期和每个广告组约 50 个优化转化事件的要求。"],
+          ["21:30-22:30", "设计 1 个 Meta 测试结构：广泛、兴趣、相似人群，每组 3 条广告。"],
+          ["22:30-23:00", "写 Meta 首轮测试判断标准。"]
+        ],
+        prompts: ["Campaign 目标", "Ad Set 结构", "每组广告数量", "CTR/CPC/CVR/CPA 判断标准"],
+        checklist: ["已设计 Meta 测试结构", "已明确每个广告组变量", "已写素材数量", "已写首轮判断标准"],
+        deliverable: "Meta 首轮测试结构"
+      },
+      {
+        day: 11, stage: 2, title: "TikTok / 抖音短视频投放",
+        goal: "训练短视频广告的前 3 秒、前 8 秒和 CTA。",
+        concept: ["前 3 秒决定停留。", "前 8 秒决定兴趣。", "最后 CTA 决定行动。", "TikTok Events Manager 可管理网站、App、站内或 CRM 事件连接。"],
+        tasks: [
+          ["20:00-20:30", "学习短视频投放核心。"],
+          ["20:30-21:30", "拆解 10 条短视频广告。"],
+          ["21:30-22:30", "写 5 条短视频广告脚本。"],
+          ["22:30-23:00", "选 2 条适合用 AI 工具快速生成的视频脚本。"]
+        ],
+        prompts: ["10 条视频的前 3 秒钩子", "人设和节奏观察", "5 条短视频脚本", "2 条可快速生成脚本"],
+        checklist: ["已拆 10 条视频广告", "已记录钩子、人设、节奏、卖点和 CTA", "已写 5 条脚本", "已选 2 条可制作脚本"],
+        deliverable: "短视频广告拆解 + 脚本 v2"
+      },
+      {
+        day: 12, stage: 2, title: "小红书 / 内容种草投放",
+        goal: "理解搜索心智、真实体验、收藏价值和评论区转化。",
+        concept: ["小红书内容逻辑：搜索心智 + 真实体验 + 收藏价值 + 评论区转化。", "标题和封面负责点击，正文负责信任，评论区负责顾虑处理。"],
+        tasks: [
+          ["20:00-20:30", "学习小红书内容逻辑。"],
+          ["20:30-21:30", "拆 10 篇小红书笔记。"],
+          ["21:30-22:30", "写 10 个小红书标题。"],
+          ["22:30-23:00", "设计 3 篇种草笔记结构。"]
+        ],
+        prompts: ["10 篇笔记的标题和封面", "评论区高频问题", "10 个小红书标题", "3 篇种草笔记结构"],
+        checklist: ["已拆 10 篇笔记", "已记录评论区问题", "已写 10 个标题", "已设计 3 篇笔记结构"],
+        deliverable: "小红书种草笔记方案"
+      },
+      {
+        day: 13, stage: 2, title: "素材生产工作流",
+        goal: "建立素材矩阵和素材库，形成可持续上新的生产方式。",
+        concept: ["素材类型：痛点型、结果型、对比型、教程型、故事型、反常识型。", "素材库要有 ID、渠道、钩子、卖点、形式、状态、数据。", "素材不是创意展示，而是可被测试的假设。"],
+        tasks: [
+          ["20:00-20:30", "学习素材矩阵。"],
+          ["20:30-21:30", "搭建素材库表格。"],
+          ["21:30-22:30", "产出 10 条标题、5 条短文案、3 条短视频脚本、3 张图文封面。"],
+          ["22:30-23:00", "给每个素材打标签。"]
+        ],
+        prompts: ["素材 ID 规则", "10 条标题", "5 条短文案", "3 条视频脚本", "3 张封面构图"],
+        checklist: ["已建立素材库字段", "已产出首批素材", "已给素材打标签", "已标注测试假设"],
+        deliverable: "素材库 v1"
+      },
+      {
+        day: 14, stage: 2, title: "第 2 周复盘",
+        goal: "整理平台认知，确定首轮真实测试平台。",
+        concept: ["AI SaaS 优先 Google + Meta。", "课程/知识产品优先 Meta + 小红书。", "电商单品优先 TikTok + Meta。", "国内自媒体/私域优先小红书 + 巨量。"],
+        tasks: [
+          ["20:00-21:00", "整理平台认知表。"],
+          ["21:00-22:00", "确定首轮实战平台。"],
+          ["22:00-23:00", "写第 2 周复盘报告。"]
+        ],
+        prompts: ["每个平台适合你的什么项目？", "首轮实战平台是什么？", "为什么不是其他平台？", "第 2 周最大的认知变化"],
+        checklist: ["已完成平台认知表", "已确定首轮实战平台", "已写渠道取舍理由", "已写第 2 周复盘"],
+        deliverable: "第 2 周复盘报告"
+      },
+      {
+        day: 15, stage: 3, title: "搭建落地页",
+        goal: "做出一个最小可用落地页，并明确转化目标。",
+        concept: ["落地页目标可以是留邮箱、加微信、购买、注册、预约 Demo。", "最小可用结构：标题、副标题、截图/视频、3 个卖点、使用流程、用户收益、价格/领取方式、CTA、FAQ。"],
+        tasks: [
+          ["20:00-20:30", "确定落地页目标。"],
+          ["20:30-22:00", "搭建一个最小可用落地页。"],
+          ["22:00-23:00", "检查移动端显示和按钮。"]
+        ],
+        prompts: ["落地页目标", "首屏标题和副标题", "3 个卖点", "CTA 文案", "移动端检查结果"],
+        checklist: ["已确定落地页目标", "已完成最小可用页面", "已检查移动端", "按钮和表单可用"],
+        deliverable: "MVP 落地页"
+      },
+      {
+        day: 16, stage: 3, title: "配置基础追踪",
+        goal: "完成 GA4、Pixel、UTM 和表单事件的基础验证。",
+        concept: ["核心事件先保持简单：访问页面、点击 CTA、完成转化。", "追踪先追准，再追全。", "上线前必须确认事件能回传。"],
+        tasks: [
+          ["20:00-20:30", "确定 3 个关键事件。"],
+          ["20:30-22:00", "配置 GA4、Meta Pixel、TikTok Pixel、UTM、表单提交事件。"],
+          ["22:00-23:00", "测试事件是否回传。"]
+        ],
+        prompts: ["访问事件", "点击事件", "完成转化事件", "测试记录", "异常与修复"],
+        checklist: ["已配置 GA4 或等价分析工具", "已配置至少 1 个广告 Pixel", "已测试 CTA 点击", "已测试转化事件"],
+        deliverable: "追踪配置记录"
+      },
+      {
+        day: 17, stage: 3, title: "制作第一批广告素材",
+        goal: "形成 3 个角度 × 3 个素材的首轮测试矩阵。",
+        concept: ["首轮测试矩阵：3 个角度 × 3 个素材 = 9 条广告。", "命名要包含渠道、形式、角度、编号。", "先保证可测试，再追求完美。"],
+        tasks: [
+          ["20:00-20:30", "确定测试矩阵。"],
+          ["20:30-21:30", "制作 3 条图文广告。"],
+          ["21:30-22:30", "制作 3 条短视频广告。"],
+          ["22:30-23:00", "整理素材命名。"]
+        ],
+        prompts: ["3 个广告角度", "3 条图文广告", "3 条短视频广告", "素材命名规则"],
+        checklist: ["已确定 3 个角度", "已制作图文素材", "已制作视频素材", "已按规则命名"],
+        deliverable: "首批广告素材包"
+      },
+      {
+        day: 18, stage: 3, title: "设计首轮投放实验",
+        goal: "写清楚变量、预算、成功标准和停止条件。",
+        concept: ["一次只测试一个主要变量。", "先测素材，再测人群，再测落地页。", "预算小、样本够、动作慢。"],
+        tasks: [
+          ["20:00-20:30", "学习测试原则。"],
+          ["20:30-21:30", "设计实验表：变量、预算、成功标准。"],
+          ["21:30-22:30", "设置投放结构。"],
+          ["22:30-23:00", "写清楚什么时候停。"]
+        ],
+        prompts: ["实验 A 变量和预算", "实验 B 变量和预算", "实验 C 变量和预算", "成功标准", "停止条件"],
+        checklist: ["已写实验表", "每个实验只有一个主要变量", "已写预算", "已写停止条件"],
+        deliverable: "首轮投放实验表"
+      },
+      {
+        day: 19, stage: 3, title: "上线首轮广告",
+        goal: "按检查清单上线广告，并记录初始状态。",
+        concept: ["上线前检查：页面、移动端、按钮、Pixel、UTM、预算、地区、语言。", "刚上线不要频繁修改，先让系统获得基础数据。"],
+        tasks: [
+          ["20:00-20:30", "完成上线前检查。"],
+          ["20:30-22:00", "上线广告。"],
+          ["22:00-23:00", "记录初始状态，不频繁修改。"]
+        ],
+        prompts: ["上线渠道", "广告组结构", "预算", "UTM 检查", "上线时间与初始状态"],
+        checklist: ["页面可打开", "移动端正常", "按钮有效", "Pixel 有事件", "UTM 正确", "预算、地区、语言无误"],
+        deliverable: "首轮广告上线记录"
+      },
+      {
+        day: 20, stage: 3, title: "观察数据，不乱动",
+        goal: "学会在样本量不足时克制操作，并定位问题位置。",
+        concept: ["刚上线不要急着改。", "数据量太小时不要下结论。", "先看曝光、点击、CTR、CPC，再看转化。"],
+        tasks: [
+          ["20:00-20:30", "学习广告观察原则。"],
+          ["20:30-21:30", "记录展示、点击、CTR、CPC、转化、CPA。"],
+          ["21:30-22:30", "根据现象判断问题位置。"],
+          ["22:30-23:00", "写观察笔记，不做大改。"]
+        ],
+        prompts: ["素材数据表", "当前最大问题", "可能原因", "今天不做的大改是什么"],
+        checklist: ["已记录基础数据", "已判断问题位置", "已写观察笔记", "没有在数据不足时大改"],
+        deliverable: "首轮观察笔记"
+      },
+      {
+        day: 21, stage: 3, title: "第 3 周复盘",
+        goal: "判断首轮广告结果，明确继续投、暂停、重做和下一轮测试。",
+        concept: ["复盘要回答：哪个素材 CTR 最高、CPC 最低、带来转化，落地页是否严重跳出，用户是否咨询。", "下一轮动作应该来自数据，而不是主观喜欢。"],
+        tasks: [
+          ["20:00-21:00", "整理投放数据。"],
+          ["21:00-22:00", "判断首轮广告结果。"],
+          ["22:00-23:00", "写第 3 周复盘报告。"]
+        ],
+        prompts: ["继续投", "暂停", "需要重做", "下一轮测试", "数据依据"],
+        checklist: ["已整理首轮数据", "已判断赢家素材", "已判断落地页问题", "已写下一轮测试"],
+        deliverable: "第 3 周复盘报告"
+      },
+      {
+        day: 22, stage: 4, title: "优化素材",
+        goal: "基于赢家素材复制变体，准备第二轮测试。",
+        concept: ["CTR 低换前 3 秒钩子。", "点击贵换角度或换人群。", "转化低强化承诺和信任。", "完播低缩短视频。"],
+        tasks: [
+          ["20:00-20:30", "学习素材优化方向。"],
+          ["20:30-21:30", "基于表现最好的素材复制 5 个变体。"],
+          ["21:30-22:30", "重写前 3 秒钩子。"],
+          ["22:30-23:00", "准备第二轮测试。"]
+        ],
+        prompts: ["赢家素材是什么？", "5 个变体", "新前 3 秒钩子", "第二轮测试计划"],
+        checklist: ["已找到赢家素材", "已复制 5 个变体", "已重写钩子", "已准备第二轮测试"],
+        deliverable: "素材变体包"
+      },
+      {
+        day: 23, stage: 4, title: "优化落地页",
+        goal: "围绕首屏、CTA、信任和行动成本改一版落地页。",
+        concept: ["首屏更清楚。", "CTA 更明显。", "减少选择。", "增加信任。", "降低行动成本。"],
+        tasks: [
+          ["20:00-20:30", "学习落地页优化原则。"],
+          ["20:30-21:30", "检查标题、截图、流程、价格、CTA、FAQ。"],
+          ["21:30-22:30", "改一版落地页。"],
+          ["22:30-23:00", "记录改版前后的差异。"]
+        ],
+        prompts: ["改版前问题", "首屏改法", "信任证明改法", "CTA 改法", "改版后预期"],
+        checklist: ["已检查落地页", "已改首屏", "已优化 CTA", "已记录改版差异"],
+        deliverable: "落地页 v2 改版记录"
+      },
+      {
+        day: 24, stage: 4, title: "第二轮广告测试",
+        goal: "保留赢家、关闭明显差的素材，集中预算验证新变体。",
+        concept: ["保留赢家素材。", "新增 5 个变体。", "关闭明显差的素材。", "预算略微集中。"],
+        tasks: [
+          ["20:00-20:30", "设计第二轮测试。"],
+          ["20:30-22:00", "上线第二轮广告。"],
+          ["22:00-23:00", "记录新实验表。"]
+        ],
+        prompts: ["保留哪些素材", "关闭哪些素材", "新增哪些变体", "预算如何集中", "第二轮成功标准"],
+        checklist: ["已保留赢家", "已关闭明显差的素材", "已上线新变体", "已记录实验表"],
+        deliverable: "第二轮实验表"
+      },
+      {
+        day: 25, stage: 4, title: "预算与出价",
+        goal: "建立首轮测试、验证、放量和稳定期的预算模型。",
+        concept: ["小预算阶段验证素材和转化。", "中预算阶段找稳定 CPA。", "大预算阶段放量但防止 CPA 飙升。", "放量期每次加预算不宜过猛，素材必须持续上新。"],
+        tasks: [
+          ["20:00-20:30", "理解预算逻辑。"],
+          ["20:30-21:30", "学习测试期、验证期、放量期、稳定期预算策略。"],
+          ["21:30-22:30", "为项目设计预算模型。"],
+          ["22:30-23:00", "算盈亏平衡点。"]
+        ],
+        prompts: ["首轮测试预算", "可接受 CPA", "单日最大亏损", "几天无转化停止", "几天达标放量", "盈亏平衡点"],
+        checklist: ["已写预算模型", "已计算可接受 CPA", "已设单日最大亏损", "已算盈亏平衡点"],
+        deliverable: "预算模型"
+      },
+      {
+        day: 26, stage: 4, title: "复盘分析",
+        goal: "写一份正式复盘报告，并提出第三轮优化假设。",
+        concept: ["广告复盘结构：目标、预算、素材、人群、落地页、数据、结论、下一步。", "指标判断：CTR 看素材，CPC 看流量成本，CVR 看页面，CPA 看盈利压力，ROAS 看是否可放量。"],
+        tasks: [
+          ["20:00-20:30", "学习广告复盘结构。"],
+          ["20:30-21:30", "分析 CTR、CPC、CVR、CPA、ROAS。"],
+          ["21:30-22:30", "写正式复盘报告。"],
+          ["22:30-23:00", "提出第三轮优化假设。"]
+        ],
+        prompts: ["目标与预算", "素材表现", "人群表现", "落地页表现", "数据结论", "第三轮优化假设"],
+        checklist: ["已分析关键指标", "已写正式复盘", "已给出结论", "已提出第三轮假设"],
+        deliverable: "正式投放复盘报告"
+      },
+      {
+        day: 27, stage: 4, title: "放量逻辑",
+        goal: "理解放量前提，设计横向、纵向、素材、渠道和漏斗放量方案。",
+        concept: ["放量前提：有稳定转化、CPA 可接受、素材没有快速衰退、落地页能承接、后端能成交。", "放量方式：横向放量、纵向放量、素材放量、渠道放量、漏斗放量。", "再营销人群包括访问未转化、点击 CTA 未提交、看过视频 50% 以上、加购未购买、注册未付费。"],
+        tasks: [
+          ["20:00-20:30", "学习放量前提。"],
+          ["20:30-21:30", "设计放量方案。"],
+          ["21:30-22:30", "设计再营销人群。"],
+          ["22:30-23:00", "写放量风险清单。"]
+        ],
+        prompts: ["是否满足放量前提？", "横向放量方案", "纵向放量方案", "再营销人群", "放量风险清单"],
+        checklist: ["已判断放量前提", "已设计放量方式", "已设计再营销人群", "已写风险清单"],
+        deliverable: "放量方案"
+      },
+      {
+        day: 28, stage: 4, title: "建立广告投放 SOP",
+        goal: "把 30 天训练沉淀成可复用流程和模板。",
+        concept: ["SOP 流程：选品/选项目、用户画像、广告角度、素材脚本、落地页、埋点、小预算测试、数据复盘、二轮优化、放量。", "模板让下一次投放更快开始，也让团队协作更稳定。"],
+        tasks: [
+          ["20:00-21:00", "整理标准流程。"],
+          ["21:00-22:00", "建立用户画像、广告角度、素材脚本、投放实验、复盘报告 5 个模板。"],
+          ["22:00-23:00", "把 SOP 整理成 Notion / 飞书 / Obsidian 文档。"]
+        ],
+        prompts: ["10 步 SOP", "用户画像模板", "素材脚本模板", "实验模板", "复盘模板"],
+        checklist: ["已写 10 步 SOP", "已建立 5 个模板", "已整理到文档系统", "已标注下次复用方式"],
+        deliverable: "广告投放 SOP"
+      },
+      {
+        day: 29, stage: 4, title: "完整模拟路演",
+        goal: "用老板或投资人视角检查你的投放方案是否能讲通。",
+        concept: ["路演要讲清：投什么产品、用户是谁、选哪个渠道、首轮预算、测试素材、转化事件、成功标准、失败后怎么调整。", "关键追问：为什么这个人群会买，为什么这个渠道合适，为什么这个 CPA 能接受。"],
+        tasks: [
+          ["20:00-20:30", "准备投放方案。"],
+          ["20:30-21:30", "写完整计划。"],
+          ["21:30-22:30", "用老板/投资人视角审视。"],
+          ["22:30-23:00", "改成最终版。"]
+        ],
+        prompts: ["产品与用户", "渠道和预算", "素材和转化事件", "成功标准", "失败后调整路径"],
+        checklist: ["已写完整投放计划", "已回答关键质疑", "已修改最终版", "已准备路演讲稿"],
+        deliverable: "投放方案路演稿"
+      },
+      {
+        day: 30, stage: 4, title: "毕业项目与后续计划",
+        goal: "完成毕业文档，评估能力等级，制定后续 60 天计划。",
+        concept: ["毕业文档：项目名称、目标用户、渠道选择、素材矩阵、落地页、埋点方案、首轮数据、复盘结论、下一轮计划。", "能力等级：L1 看懂指标，L2 搭建基础广告，L3 做小预算测试，L4 根据数据优化，L5 跑出正 ROI，L6 跨渠道放量，L7 搭建团队和 SOP。", "后续节奏：每周 1 个新角度、10 条新素材、1 次复盘；每月 1 次渠道扩展、沉淀 1 套案例。"],
+        tasks: [
+          ["20:00-21:00", "完成 30 天毕业文档。"],
+          ["21:00-22:00", "判断投流能力等级。"],
+          ["22:00-23:00", "制定后续 60 天计划。"]
+        ],
+        prompts: ["毕业文档", "当前能力等级", "后续 60 天计划", "下一套真实案例"],
+        checklist: ["已完成毕业文档", "已评估能力等级", "已写 60 天计划", "已定义下一个案例"],
+        deliverable: "30 天毕业项目文档"
+      }
+    ];
+
+    const templates = [
+      ["用户画像模板", "用户类型：\n年龄/身份：\n使用场景：\n预算：\n触发点：\n最怕什么：\n最想得到什么：\n会被什么广告打动："],
+      ["广告角度模板", "角度名称：\n目标人群：\n核心痛点：\n核心承诺：\n证明方式：\nCTA：\n对应素材形式："],
+      ["短视频脚本模板", "前 3 秒钩子：\n中间 15 秒：痛点 + 方案\n最后 5 秒：行动\n画面建议：\n字幕重点：\n测试假设："],
+      ["落地页模板", "首屏价值主张：\n核心痛点：\n产品机制：\n3 个用户收益：\n信任证明：\n价格/权益：\nFAQ：\nCTA："],
+      ["投放实验模板", "实验编号：\n测试变量：\n渠道：\n预算：\n素材：\n人群：\n落地页：\n成功标准：\n停止条件："],
+      ["复盘报告模板", "目标：\n预算：\n素材：\n人群：\n落地页：\n数据：CTR / CPC / CVR / CPA / ROAS\n结论：\n下一步："],
+      ["SOP 模板", "1. 选品/选项目\n2. 用户画像\n3. 广告角度\n4. 素材脚本\n5. 落地页\n6. 埋点\n7. 小预算测试\n8. 数据复盘\n9. 二轮优化\n10. 放量"],
+      ["每日 3 个训练", "拆 3 条广告：\n写 3 条标题：\n记录 1 个投放假设："]
+    ];
+
+    const skillNames = ["产品理解", "用户洞察", "渠道选择", "文案能力", "素材能力", "落地页能力", "数据分析", "复盘迭代"];
+    const stateKey = "adLearningTutorial.v1";
+    let selectedDay = 1;
+    let state = loadState();
+
+    function loadState() {
+      try {
+        const parsed = JSON.parse(localStorage.getItem(stateKey) || "{}");
+        return {
+          completed: parsed.completed || {},
+          checks: parsed.checks || {},
+          notes: parsed.notes || {},
+          portfolio: parsed.portfolio || {},
+          scores: parsed.scores || Object.fromEntries(skillNames.map((name, i) => [name, [70,70,65,75,65,65,60,60][i]]))
+        };
+      } catch {
+        return { completed: {}, checks: {}, notes: {}, portfolio: {}, scores: {} };
+      }
+    }
+
+    function saveState() {
+      localStorage.setItem(stateKey, JSON.stringify(state));
+      renderProgress();
+    }
+
+    function dayByNum(num) {
+      return days.find(d => d.day === num);
+    }
+
+    function stageByDay(num) {
+      const day = dayByNum(num);
+      return stages.find(s => s.id === day.stage);
+    }
+
+    function renderNav() {
+      const nav = document.getElementById("dayNav");
+      nav.innerHTML = stages.map(stage => `
+        <div class="stage-title">${stage.name}<br><span style="font-weight:600;color:#697168">${stage.desc}</span></div>
+        <div class="day-list">
+          ${stage.days.map(num => {
+            const day = dayByNum(num);
+            const done = state.completed[num] ? "done" : "";
+            const active = num === selectedDay ? "active" : "";
+            return `<button class="day-btn ${done} ${active}" data-day="${num}">
+              <span class="day-num">${num}</span>
+              <span>
+                <span class="day-name">${day.title}</span>
+                <span class="day-sub">${day.deliverable}</span>
+              </span>
+              <span class="check-dot" aria-hidden="true"></span>
+            </button>`;
+          }).join("")}
+        </div>
+      `).join("");
+      nav.querySelectorAll("[data-day]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          selectedDay = Number(btn.dataset.day);
+          renderNav();
+          renderDay();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+      });
+    }
+
+    function renderDay() {
+      const day = dayByNum(selectedDay);
+      const stage = stageByDay(selectedDay);
+      document.getElementById("dayTitle").textContent = `Day ${day.day}：${day.title}`;
+      document.getElementById("dayGoal").textContent = day.goal;
+      document.getElementById("stagePill").textContent = stage.name;
+
+      const savedNotes = state.notes[selectedDay] || {};
+      const content = document.getElementById("dayContent");
+      content.innerHTML = `
+        <div class="grid-2">
+          <div class="box soft">
+            <h4>核心概念</h4>
+            <ul>${day.concept.map(item => `<li>${item}</li>`).join("")}</ul>
+          </div>
+          <div class="box warn">
+            <h4>当天产出</h4>
+            <p>${day.deliverable}</p>
+            <button class="primary" id="completeDayBtn">${state.completed[selectedDay] ? "已完成，点击取消" : "标记今天完成"}</button>
+          </div>
+        </div>
+
+        <div class="panel" style="box-shadow:none;margin-top:16px">
+          <div class="panel-head"><div><h3>3 小时学习节奏</h3><p>如果当天很忙，至少完成 1 小时核心任务：看 3 条广告、拆 1 个落地页、写 1 条复盘。</p></div></div>
+          <div class="panel-body">
+            <div class="timeline">
+              ${day.tasks.map(([time, text]) => `<div class="time-slot"><strong>${time}</strong><span>${text}</span></div>`).join("")}
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="box">
+            <h4>可填写练习</h4>
+            <div class="practice">
+              ${day.prompts.map((prompt, idx) => `
+                <div>
+                  <label>${prompt}</label>
+                  <textarea data-note="${idx}" placeholder="在这里写下你的答案">${savedNotes[idx] || ""}</textarea>
+                </div>
+              `).join("")}
+            </div>
+          </div>
+          <div class="box">
+            <h4>完成检查</h4>
+            <div class="checklist">
+              ${day.checklist.map((item, idx) => {
+                const checked = state.checks[`${selectedDay}-${idx}`] ? "checked" : "";
+                return `<label class="check-item"><input type="checkbox" data-check="${idx}" ${checked}><span>${item}</span></label>`;
+              }).join("")}
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" style="box-shadow:none;margin-top:16px">
+          <div class="panel-head"><div><h3>每日固定训练</h3><p>不管当天学什么，每天都做这 3 件事。</p></div></div>
+          <div class="panel-body grid-3">
+            <div class="asset-card">
+              <strong>拆 3 条广告</strong>
+              <div class="ad-preview">
+                <div class="ad-image">HOOK / PAIN / CTA</div>
+                <div class="ad-copy"><strong>记录问题</strong>它卖什么？钩子是什么？承诺了什么结果？让我做什么？</div>
+              </div>
+            </div>
+            <div class="asset-card">
+              <strong>写 3 条标题</strong>
+              <textarea data-note="dailyTitles" placeholder="标题 1&#10;标题 2&#10;标题 3">${savedNotes.dailyTitles || ""}</textarea>
+            </div>
+            <div class="asset-card">
+              <strong>记录 1 个投放假设</strong>
+              <textarea data-note="dailyHypothesis" placeholder="如果用户的问题是……那么广告应该主打……">${savedNotes.dailyHypothesis || ""}</textarea>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.querySelectorAll("[data-note]").forEach(el => {
+        el.addEventListener("input", () => {
+          state.notes[selectedDay] = state.notes[selectedDay] || {};
+          state.notes[selectedDay][el.dataset.note] = el.value;
+          saveState();
+        });
+      });
+
+      document.querySelectorAll("[data-check]").forEach(el => {
+        el.addEventListener("change", () => {
+          state.checks[`${selectedDay}-${el.dataset.check}`] = el.checked;
+          saveState();
+        });
+      });
+
+      document.getElementById("completeDayBtn").addEventListener("click", () => {
+        state.completed[selectedDay] = !state.completed[selectedDay];
+        saveState();
+        renderNav();
+        renderDay();
+      });
+    }
+
+    function renderProgress() {
+      const done = Object.values(state.completed).filter(Boolean).length;
+      const pct = Math.round(done / 30 * 100);
+      const currentStage = stageByDay(selectedDay);
+      const notesCount = Object.values(state.notes).reduce((sum, noteObj) => sum + Object.values(noteObj || {}).filter(v => String(v).trim()).length, 0);
+      const avg = Math.round(skillNames.reduce((sum, name) => sum + Number(state.scores[name] || 0), 0) / skillNames.length);
+      document.getElementById("overallText").textContent = `${done} / 30 天`;
+      document.getElementById("overallBar").style.width = `${pct}%`;
+      document.getElementById("doneDays").textContent = done;
+      document.getElementById("assetCount").textContent = notesCount;
+      document.getElementById("currentStage").textContent = currentStage.id;
+      document.getElementById("avgScore").textContent = avg;
+    }
+
+    function renderTemplates() {
+      document.getElementById("templatesGrid").innerHTML = templates.map(([title, body]) => `
+        <div class="template">
+          <h4>${title}</h4>
+          <pre>${body}</pre>
+        </div>
+      `).join("");
+    }
+
+    function setupTabs() {
+      document.querySelectorAll(".tab").forEach(tab => {
+        tab.addEventListener("click", () => {
+          document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+          document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+          tab.classList.add("active");
+          document.getElementById(tab.dataset.view).classList.add("active");
+          if (tab.dataset.view === "tools") drawRadar();
+        });
+      });
+    }
+
+    function setupCalculator() {
+      const ids = ["budget", "cpm", "ctr", "cvr", "aov", "margin"];
+      ids.forEach(id => document.getElementById(id).addEventListener("input", calc));
+      calc();
+      function money(n) { return `¥${Math.round(n).toLocaleString("zh-CN")}`; }
+      function calc() {
+        const budget = Number(document.getElementById("budget").value) || 0;
+        const cpm = Number(document.getElementById("cpm").value) || 1;
+        const ctr = (Number(document.getElementById("ctr").value) || 0) / 100;
+        const cvr = (Number(document.getElementById("cvr").value) || 0) / 100;
+        const aov = Number(document.getElementById("aov").value) || 0;
+        const margin = (Number(document.getElementById("margin").value) || 0) / 100;
+        const impressions = budget / cpm * 1000;
+        const clicks = impressions * ctr;
+        const conv = clicks * cvr;
+        const cpa = conv > 0 ? budget / conv : 0;
+        const revenue = conv * aov;
+        const profit = revenue * margin - budget;
+        document.getElementById("rImpressions").textContent = Math.round(impressions).toLocaleString("zh-CN");
+        document.getElementById("rClicks").textContent = Math.round(clicks).toLocaleString("zh-CN");
+        document.getElementById("rConv").textContent = conv.toFixed(1);
+        document.getElementById("rCpa").textContent = money(cpa);
+        document.getElementById("rRevenue").textContent = money(revenue);
+        document.getElementById("rProfit").textContent = money(profit);
+      }
+    }
+
+    function setupUtm() {
+      ["utmSource", "utmMedium", "utmCampaign", "utmContent"].forEach(id => {
+        document.getElementById(id).addEventListener("input", updateUtm);
+      });
+      updateUtm();
+      function clean(value) {
+        return encodeURIComponent(String(value || "").trim().replace(/\s+/g, "_").toLowerCase());
+      }
+      function updateUtm() {
+        const source = clean(document.getElementById("utmSource").value);
+        const medium = clean(document.getElementById("utmMedium").value);
+        const campaign = clean(document.getElementById("utmCampaign").value);
+        const content = clean(document.getElementById("utmContent").value);
+        document.getElementById("utmOutput").value = `?utm_source=${source}&utm_medium=${medium}&utm_campaign=${campaign}&utm_content=${content}`;
+      }
+    }
+
+    function setupScores() {
+      const list = document.getElementById("scoreList");
+      list.innerHTML = skillNames.map(name => `
+        <div class="score-row">
+          <label style="margin:0">${name}</label>
+          <input type="range" min="0" max="100" value="${state.scores[name] || 0}" data-score="${name}">
+          <strong id="score-${name}">${state.scores[name] || 0}</strong>
+        </div>
+      `).join("");
+      list.querySelectorAll("[data-score]").forEach(input => {
+        input.addEventListener("input", () => {
+          state.scores[input.dataset.score] = Number(input.value);
+          document.getElementById(`score-${input.dataset.score}`).textContent = input.value;
+          saveState();
+          drawRadar();
+        });
+      });
+      drawRadar();
+    }
+
+    function drawRadar() {
+      const canvas = document.getElementById("radar");
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+      const w = canvas.width, h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+      const cx = w / 2, cy = h / 2, maxR = 90;
+      ctx.strokeStyle = "#dfe4dc";
+      ctx.fillStyle = "#636860";
+      ctx.font = "11px system-ui";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      for (let ring = 1; ring <= 5; ring++) {
+        drawPoly(maxR * ring / 5, false);
+      }
+      skillNames.forEach((name, i) => {
+        const a = -Math.PI / 2 + i * Math.PI * 2 / skillNames.length;
+        const x = cx + Math.cos(a) * maxR;
+        const y = cy + Math.sin(a) * maxR;
+        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(x, y); ctx.stroke();
+        const lx = cx + Math.cos(a) * (maxR + 24);
+        const ly = cy + Math.sin(a) * (maxR + 24);
+        ctx.fillText(name.slice(0, 4), lx, ly);
+      });
+      const pts = skillNames.map((name, i) => {
+        const a = -Math.PI / 2 + i * Math.PI * 2 / skillNames.length;
+        const r = maxR * (Number(state.scores[name] || 0) / 100);
+        return [cx + Math.cos(a) * r, cy + Math.sin(a) * r];
+      });
+      ctx.beginPath();
+      pts.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y));
+      ctx.closePath();
+      ctx.fillStyle = "rgba(15,118,110,.20)";
+      ctx.strokeStyle = "#0f766e";
+      ctx.lineWidth = 2;
+      ctx.fill(); ctx.stroke();
+      ctx.lineWidth = 1;
+
+      function drawPoly(r) {
+        ctx.beginPath();
+        for (let i = 0; i < skillNames.length; i++) {
+          const a = -Math.PI / 2 + i * Math.PI * 2 / skillNames.length;
+          const x = cx + Math.cos(a) * r;
+          const y = cy + Math.sin(a) * r;
+          i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+        }
+        ctx.closePath();
+        ctx.stroke();
+      }
+    }
+
+    function setupPortfolio() {
+      document.querySelectorAll("[data-portfolio]").forEach(el => {
+        const key = el.dataset.portfolio;
+        el.value = state.portfolio[key] || "";
+        el.addEventListener("input", () => {
+          state.portfolio[key] = el.value;
+          saveState();
+        });
+      });
+    }
+
+    function setupExportReset() {
+      document.getElementById("exportBtn").addEventListener("click", () => {
+        const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "ad-learning-record.json";
+        a.click();
+        URL.revokeObjectURL(url);
+      });
+      document.getElementById("resetBtn").addEventListener("click", () => {
+        const ok = confirm("确认清空当前浏览器里的学习记录？这个操作不能撤销。");
+        if (!ok) return;
+        localStorage.removeItem(stateKey);
+        state = loadState();
+        selectedDay = 1;
+        renderNav();
+        renderDay();
+        renderProgress();
+        setupScores();
+        setupPortfolio();
+      });
+    }
+
+    renderNav();
+    renderDay();
+    renderTemplates();
+    renderProgress();
+    setupTabs();
+    setupCalculator();
+    setupUtm();
+    setupScores();
+    setupPortfolio();
+    setupExportReset();
+  </script>
+</body>
+</html>

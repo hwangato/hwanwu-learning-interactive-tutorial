@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>12周跨境电商出海系统学习计划 - 互动教程</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- FontAwesome 图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .sidebar-scroll::-webkit-scrollbar { width: 4px; }
+        .sidebar-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 2px; }
+        html { scroll-behavior: smooth; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased font-sans">
+
+    <!-- 顶部导航栏 -->
+    <header class="sticky top-0 z-50 bg-white border-b border-slate-200 px-6 py-4 flex justify-between items-center shadow-sm">
+        <div class="flex items-center space-x-3">
+            <div class="bg-indigo-600 text-white p-2 rounded-lg">
+                <i class="fa-solid fa-ship text-lg"></i>
+            </div>
+            <div>
+                <h1 class="text-lg font-bold text-slate-900">跨境出海系统实战教程</h1>
+                <p class="text-xs text-slate-500">2026 智胜出海：AI运营 × 品牌化 × 独立站</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-4">
+            <span class="text-sm text-slate-600">总进度:</span>
+            <div class="w-40 bg-slate-200 rounded-full h-2.5">
+                <div id="total-progress" class="bg-indigo-600 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+            </div>
+            <span id="progress-percent" class="text-sm font-semibold text-indigo-600">0%</span>
+        </div>
+    </header>
+
+    <div class="flex min-h-screen">
+        <!-- 左侧固定导航栏 -->
+        <aside class="w-72 bg-white border-r border-slate-200 p-4 sticky top-[73px] h-[calc(100vh-73px)] overflow-y-auto sidebar-scroll hidden md:block">
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">核心定位</p>
+            <ul class="space-y-1 mb-6">
+                <li><a href="#intro" class="flex items-center space-x-2 p-2 rounded-md text-slate-700 hover:bg-slate-100 text-sm"><i class="fa-solid fa-map text-slate-400 w-5"></i> <span>目标路线定位</span></a></li>
+                <li><a href="#core-skills" class="flex items-center space-x-2 p-2 rounded-md text-slate-700 hover:bg-slate-100 text-sm"><i class="fa-solid fa-bolt text-slate-400 w-5"></i> <span>重点能力构建</span></a></li>
+            </ul>
+
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">12周实战计划</p>
+            <ul class="space-y-1 mb-6" id="sidebar-weeks">
+                <!-- 动态生成或静态写入保证定位 -->
+                <li><a href="#week1" class="flex items-center justify-between p-2 rounded-md text-slate-700 hover:bg-slate-100 text-sm"><span>第1周：跨境全局图谱</span><input type="checkbox" class="week-chk" data-week="1"></a></li>
+                <li><a href="#week2" class="flex items-center justify-between p-2 rounded-md text-slate-700 hover:bg-slate-100 text-sm"><span>第2周：市场与选品方法</span><input type="checkbox" class="week-chk" data-week="2"></a></li>
+                <li><a href="#week3" class="flex items-center justify-between p-2 rounded-md text-slate-700 hover:bg-slate-100 text-sm"><span>第3周：用户画像与定位</span><input type="checkbox" class="week-chk" data-week="3"></a></li>
+                <li><a href="#week4" class="flex items-center justify-between p-2 rounded-md text-slate-700 hover:bg-slate-100 text-sm"><span>第4周：供应链与模型</span><input type="checkbox" class="week-chk" data-week="4"></a></li>
+                <li><a href="#week5" class="flex items-center justify-between p-2 rounded-md text-slate-700 hover:bg-slate-100 text-sm"><span>第5周：平台电商入门</span><input type="checkbox" class="week-chk" data-week="5"></a></li>
+                <li><a href="#week6" class="flex items-center justify-between p-2 rounded-md text-slate-700 hover:bg-slate-100 text-sm"><span>第6周：独立站DTC搭建</span><input type="checkbox" class="week-chk" data-week="6"></a></li>
+                <li><a href="#week7" class="flex items-center justify-between p-2 rounded-md text-slate-700 hover:bg-slate-100 text-sm"><span>第7周：内容与TikTok</span><input type="checkbox" class="week-chk" data-week="7"></a></li>
+                <li><a href="#week8" class="flex items-center justify-between p-2 rounded-md text-slate-700 hover:bg-slate-100 text-sm"><span>第8周：精细化广告投放</span><input type="checkbox" class="week-chk" data-week="8"></a></li>
+                <li><a href="#week9" class="flex items-center justify-between p-2 rounded-md text-slate-700 hover:bg-slate-100 text-sm"><span>第9周：物流支付与履约</span><input type="checkbox" class="week-chk" data-week="9"></a></li>
+                <li><a href="#week10" class="flex items-center justify-between p-2 rounded-md text-slate-700 hover:bg-slate-100 text-sm"><span>第10周：合规税务风控</span><input type="checkbox" class="week-chk" data-week="10"></a></li>
+                <li><a href="#week11" class="flex items-center justify-between p-2 rounded-md text-slate-700 hover:bg-slate-100 text-sm"><span>第11周：数据分析复盘</span><input type="checkbox" class="week-chk" data-week="11"></a></li>
+                <li><a href="#week12" class="flex items-center justify-between p-2 rounded-md text-slate-700 hover:bg-slate-100 text-sm"><span>第12周：MVP实战闭环</span><input type="checkbox" class="week-chk" data-week="12"></a></li>
+            </ul>
+
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">执行指引与工具</p>
+            <ul class="space-y-1">
+                <li><a href="#path" class="flex items-center space-x-2 p-2 rounded-md text-slate-700 hover:bg-slate-100 text-sm"><i class="fa-solid fa-route text-slate-400 w-5"></i> <span>推荐推进路径</span></a></li>
+                <li><a href="#schedule" class="flex items-center space-x-2 p-2 rounded-md text-slate-700 hover:bg-slate-100 text-sm"><i class="fa-solid fa-calendar-day text-slate-400 w-5"></i> <span>每日学习安排</span></a></li>
+                <li><a href="#tools" class="flex items-center space-x-2 p-2 rounded-md text-slate-700 hover:bg-slate-100 text-sm"><i class="fa-solid fa-toolbox text-slate-400 w-5"></i> <span>全局工具库</span></a></li>
+                <li><a href="#ai-future" class="flex items-center space-x-2 p-2 rounded-md text-slate-700 hover:bg-slate-100 text-sm"><i class="fa-solid fa-robot text-slate-400 w-5"></i> <span>技术背景进阶</span></a></li>
+            </ul>
+        </aside>
+
+        <!-- 主内容区 -->
+        <main class="flex-1 bg-slate-50 px-4 py-8 md:p-12 max-w-4xl mx-auto overflow-hidden">
+            
+            <!-- 行业背景 -->
+            <section class="bg-gradient-to-r from-indigo-900 to-slate-900 text-white p-6 md:p-8 rounded-2xl mb-12 shadow-md">
+                <span class="bg-indigo-500 text-xs px-3 py-1 rounded-full font-semibold uppercase tracking-wider">2026 行业趋势视角</span>
+                <h2 class="text-2xl md:text-3xl font-bold mt-3 mb-4">12周跨境电商出海系统学习计划</h2>
+                <p class="text-slate-300 leading-relaxed text-sm md:text-base">
+                    跨境电商仍在持续增长，但玩法已彻底告别粗暴的“铺货+低价”，全面转向 <strong>品牌化、内容驱动、AI自动化、合规履约</strong>。本教程旨在帮助你建立从选品到盈利验证的全链路闭环。
+                </p>
+                <div class="mt-4 p-3 bg-white/10 rounded-lg border border-white/10 text-xs text-slate-300 flex items-start space-x-2">
+                    <i class="fa-solid fa-circle-info mt-0.5"></i>
+                    <span>根据 Coherent Market Insights 等机构预测，2026年社交电商与AI购物代理（Agentic Commerce）的兴起正在深度改变用户购买路径，合规性与供应链履约效率成为了出海的核心护城河。</span>
+                </div>
+            </section>
+
+            <!-- 路线定位 -->
+            <section id="intro" class="bg-white p-6 md:p-8 rounded-xl border border-slate-200 shadow-sm mb-12 scroll-mt-24">
+                <h3 class="text-xl font-bold text-slate-900 mb-6 flex items-center"><i class="fa-solid fa-map-marked-alt text-indigo-600 mr-2"></i> 一、 学习目标定位</h3>
+                <p class="text-slate-600 mb-4 text-sm leading-relaxed">在投身实战前，先看清跨境电商的三条主流战场路线：</p>
+                
+                <!-- 响应式表格 -->
+                <div class="overflow-x-auto border border-slate-200 rounded-lg mb-6">
+                    <table class="w-full text-left border-collapse text-sm">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-200 text-slate-700 font-semibold">
+                                <th class="p-3">路线</th>
+                                <th class="p-3">适合人群</th>
+                                <th class="p-3">优点</th>
+                                <th class="p-3">缺点</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200 text-slate-600">
+                            <tr class="hover:bg-slate-50">
+                                <td class="p-3 font-semibold text-slate-900">Amazon / Walmart 平台型</td>
+                                <td class="p-3">想快速接触真实订单</td>
+                                <td class="p-3 text-emerald-600">流量成熟、规则明确</td>
+                                <td class="p-3 text-rose-600">竞争激烈、费用高、规则复杂</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="p-3 font-semibold text-slate-900">Shopify / 独立站 DTC</td>
+                                <td class="p-3">想做品牌和长期资产</td>
+                                <td class="p-3 text-emerald-600">数据自主掌控、品牌溢价空间大</td>
+                                <td class="p-3 text-rose-600">需要极强的投放与内容转化能力</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="p-3 font-semibold text-slate-900">TikTok Shop / 内容电商</td>
+                                <td class="p-3">擅长短视频、达人、爆品</td>
+                                <td class="p-3 text-emerald-600">内容驱动、起量速度极快</td>
+                                <td class="p-3 text-rose-600">爆品生命周期短、运营强度极高</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="bg-indigo-50 border-l-4 border-indigo-600 p-4 rounded-r-lg">
+                    <p class="text-sm text-indigo-900 font-bold mb-1"><i class="fa-solid fa-lightbulb"></i> 专家针对技术/AI背景卖家的黄金路线建议：</p>
+                    <p class="text-sm text-indigo-700 font-mono font-medium">AI选品 + 独立站/Shopify + TikTok/Meta内容投放 + 自动化运营工具</p>
+                    <p class="text-xs text-slate-500 mt-1">此路线能充分将技术优势转化为杠杆，避免陷入单纯与普通卖家拼体力的红海漩涡。</p>
+                </div>
+            </section>
+
+            <hr class="border-slate-200 my-12">
+
+            <!-- 12周计划核心内容 -->
+            <h3 class="text-2xl font-bold text-slate-900 mb-6 flex items-center"><i class="fa-solid fa-calendar-check text-indigo-600 mr-2"></i> 二、 12周系统学习计划</h3>
+            
+            <div class="space-y-8">
+                <!-- 第1周 -->
+                <div id="week1" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm scroll-mt-24 transition-all hover:border-indigo-300">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded">第 1 周</span>
+                            <h4 class="text-lg font-bold text-slate-900 mt-1">理解跨境电商全局</h4>
+                        </div>
+                        <span class="text-xs text-amber-600 font-medium bg-amber-50 px-2 py-1 rounded">目标：建立完整地图，明晰钱流与风险</span>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-4 text-sm text-slate-600">
+                        <div>
+                            <h5 class="font-semibold text-slate-800 mb-1">⚡ 核心学习内容：</h5>
+                            <ul class="list-disc pl-5 space-y-1 text-xs">
+                                <li><strong>商业模式区别：</strong> B2C, DTC, Dropshipping, 半托管/全托管, 白牌与品牌。</li>
+                                <li><strong>主流平台特性：</strong> Amazon, Shopify, TikTok Shop, Temu, SHEIN, Etsy, Walmart。</li>
+                                <li><strong>核心全链路：</strong> 选品 → 供应链 → 上架 → 流量 → 转化 → 支付 → 物流 → 售后 → 复购。</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h5 class="font-semibold text-slate-800 mb-1">📊 核心运营指标：</h5>
+                            <div class="flex flex-wrap gap-1.5 text-[11px]">
+                                <span class="bg-slate-100 px-2 py-0.5 rounded">GMV 交易总额</span>
+                                <span class="bg-slate-100 px-2 py-0.5 rounded">AOV 客单价</span>
+                                <span class="bg-slate-100 px-2 py-0.5 rounded">毛利率</span>
+                                <span class="bg-slate-100 px-2 py-0.5 rounded">CAC 获客成本</span>
+                                <span class="bg-slate-100 px-2 py-0.5 rounded">ROAS 广告投资回报比</span>
+                                <span class="bg-slate-100 px-2 py-0.5 rounded">ROI 投资回报率</span>
+                                <span class="bg-slate-100 px-2 py-0.5 rounded">CVR 转化率</span>
+                                <span class="bg-slate-100 px-2 py-0.5 rounded">LTV 用户生命周期价值</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 bg-slate-50 p-3 rounded border border-dashed border-slate-200 text-xs">
+                        <strong class="text-indigo-600"><i class="fa-solid fa-trophy"></i> 本周交付物：</strong> 亲手绘制一张专属于你规划路线的“跨境电商业务闭环流程图”。
+                    </div>
+                </div>
+
+                <!-- 第2周 -->
+                <div id="week2" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm scroll-mt-24 transition-all hover:border-indigo-300">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded">第 2 周</span>
+                            <h4 class="text-lg font-bold text-slate-900 mt-1">市场与选品方法</h4>
+                        </div>
+                        <span class="text-xs text-amber-600 font-medium bg-amber-50 px-2 py-1 rounded">目标：学会客观判断产品的真实市场机会</span>
+                    </div>
+                    <div class="space-y-3 text-sm text-slate-600">
+                        <div>
+                            <span class="font-semibold text-slate-800 text-xs block mb-1">🔍 选品多维考量：</span>
+                            <p class="text-xs leading-relaxed">真实需求、搜索量趋势、内容传播属性、利润空间、物流便利度、合规与退货率风险。</p>
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-4 text-xs">
+                            <div class="bg-emerald-50/50 p-2.5 rounded border border-emerald-100">
+                                <strong class="text-emerald-700 block mb-1"><i class="fa-solid fa-check-circle"></i> 推荐切入方向：</strong>
+                                家居收纳、宠物用品、运动健身、美妆个护、母婴周边、户外露营、小型电子配件、兴趣礼品定制。
+                            </div>
+                            <div class="bg-rose-50/50 p-2.5 rounded border border-rose-100">
+                                <strong class="text-rose-700 block mb-1"><i class="fa-solid fa-ban"></i> 避免踩坑品类：</strong>
+                                强认证电子产品、食品/药品/保健品、危险品、侵权IP仿牌、超重易碎、高退货率复杂工业品。
+                            </div>
+                        </div>
+                        <div>
+                            <span class="font-semibold text-slate-800 text-xs block mb-1">🛠️ 选品必备雷达工具：</span>
+                            <div class="flex flex-wrap gap-1 text-[11px] font-mono">
+                                <span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded">Amazon Best Sellers</span>
+                                <span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded">Google Trends</span>
+                                <span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded">TikTok Creative Center</span>
+                                <span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded">Meta Ads Library</span>
+                                <span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded">Similarweb</span>
+                                <span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded">Semrush/Ahrefs</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 bg-slate-50 p-3 rounded border border-dashed border-slate-200 text-xs">
+                        <strong class="text-indigo-600"><i class="fa-solid fa-trophy"></i> 本周交付物：</strong> 挖掘出 20 个候选产品，并建立选品漏斗打分表（对需求、利润、竞争、物流、内容力、风险等指标精细量化）。
+                    </div>
+                </div>
+
+                <!-- 第3周 -->
+                <div id="week3" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm scroll-mt-24 transition-all hover:border-indigo-300">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded">第 3 周</span>
+                            <h4 class="text-lg font-bold text-slate-900 mt-1">用户、国家与定位</h4>
+                        </div>
+                        <span class="text-xs text-amber-600 font-medium bg-amber-50 px-2 py-1 rounded">目标：告别“卖全球”，精准锁定单一国家与人群场景</span>
+                    </div>
+                    <div class="space-y-3 text-sm text-slate-600">
+                        <p class="text-xs"><strong>目标市场：</strong> 以美、英、德、法、澳、加、新、中东为核心。需从消费力、物流时效、支付偏好、语言门槛、广告CAC成本、法规等六个核心维度分析评估。</p>
+                        <div class="bg-slate-50 p-3 rounded text-xs space-y-1">
+                            <span class="font-bold text-slate-800 block mb-1">💡 精确对标定位维度：</span>
+                            <p>· 功能定位 / 情绪定位 / 特定场景定位 / 礼品定位 / 精细人群细分</p>
+                        </div>
+                        <!-- 互动卡片 -->
+                        <div class="border border-indigo-100 bg-indigo-50/30 p-3 rounded-lg text-xs">
+                            <span class="font-bold text-indigo-950 block mb-1"><i class="fa-solid fa-copy"></i> 经典用户画像与定位语示例：</span>
+                            <ul class="space-y-1 text-slate-700 font-mono">
+                                <li><strong>产品：</strong> 便携式宠物饮水杯</li>
+                                <li><strong>人群：</strong> 美国城市养狗女性 (25-40岁)</li>
+                                <li><strong>定位：</strong> <span class="text-indigo-600 font-bold">"For dog parents who travel more with less mess."</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="mt-4 bg-slate-50 p-3 rounded border border-dashed border-slate-200 text-xs">
+                        <strong class="text-indigo-600"><i class="fa-solid fa-trophy"></i> 本周交付物：</strong> 挑出3个候选产品，分别为其独立撰写一份完整的海外消费者画像与极具传播力的核心定位语（Tagline）。
+                    </div>
+                </div>
+
+                <!-- 第4周 -->
+                <div id="week4" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm scroll-mt-24 transition-all hover:border-indigo-300">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded">第 4 周</span>
+                            <h4 class="text-lg font-bold text-slate-900 mt-1">供应链与成本模型</h4>
+                        </div>
+                        <span class="text-xs text-amber-600 font-medium bg-amber-50 px-2 py-1 rounded">目标：精细化计算，彻底算清产品微观盈利模型</span>
+                    </div>
+                    <div class="space-y-3 text-sm text-slate-600">
+                        <div class="bg-slate-950 text-slate-200 font-mono p-3 rounded-lg text-xs">
+                            <span class="text-slate-400 block mb-1">// 定价与成本基本公式：</span>
+                            售价 = 产品采购成本 + 包装成本 + 国际物流/本地配送 + 平台佣金 + 支付手续费 + 广告流量成本 + 退货/售后损耗 + 目标净利润
+                        </div>
+                        <div class="grid md:grid-cols-3 gap-2 text-center text-xs">
+                            <div class="bg-slate-100 p-2 rounded">
+                                <span class="block text-slate-500">平台型产品</span>
+                                <strong class="text-slate-800 text-sm">建议毛利率 ≥ 30%</strong>
+                            </div>
+                            <div class="bg-indigo-50 p-2 rounded">
+                                <span class="block text-indigo-500">独立站产品</span>
+                                <strong class="text-indigo-800 text-sm">建议毛利率 ≥ 50%</strong>
+                            </div>
+                            <div class="bg-emerald-50 p-2 rounded">
+                                <span class="block text-emerald-500">广告驱动型</span>
+                                <strong class="text-emerald-800 text-sm">建议毛利率 ≥ 60%</strong>
+                            </div>
+                        </div>
+                        
+                        <!-- 简易交互成本计算器 -->
+                        <div class="bg-slate-100/60 p-3 rounded-lg border border-slate-200 mt-2">
+                            <span class="text-xs font-bold text-slate-700 block mb-2"><i class="fa-solid fa-calculator"></i> 极简单品售价心算模拟：</span>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+                                <label>采购成本($): <input type="number" id="calc-cost" value="5" class="w-full bg-white border border-slate-300 rounded px-1.5 py-0.5 mt-0.5"></label>
+                                <label>头程+尾程($): <input type="number" id="calc-ship" value="6" class="w-full bg-white border border-slate-300 rounded px-1.5 py-0.5 mt-0.5"></label>
+                                <label>广告预估CPA($): <input type="number" id="calc-cpa" value="10" class="w-full bg-white border border-slate-300 rounded px-1.5 py-0.5 mt-0.5"></label>
+                                <div class="pt-4 text-right">
+                                    <button onclick="calculatePrice()" class="bg-indigo-600 text-white px-2 py-1 rounded text-[11px] font-bold hover:bg-indigo-700">测算保本价</button>
+                                </div>
+                            </div>
+                            <p class="text-[11px] text-indigo-600 mt-2 font-mono" id="calc-result">预估保本售价（未计退损与佣金）：$21.00</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 bg-slate-50 p-3 rounded border border-dashed border-slate-200 text-xs">
+                        <strong class="text-indigo-600"><i class="fa-solid fa-trophy"></i> 本周交付物：</strong> 使用 Excel 或 Google Sheets 建立一套动态的产品利润模型测算表，并录入至少5个产品进行成本跑通演练。
+                    </div>
+                </div>
+
+                <!-- 第5周 -->
+                <div id="week5" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm scroll-mt-24 transition-all hover:border-indigo-300">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded">第 5 周</span>
+                            <h4 class="text-lg font-bold text-slate-900 mt-1">平台电商入门：Amazon / Etsy / eBay</h4>
+                        </div>
+                        <span class="text-xs text-amber-600 font-medium bg-amber-50 px-2 py-1 rounded">目标：理解并掌握传统货架电商平台的底层算法流量规则</span>
+                    </div>
+                    <div class="space-y-3 text-sm text-slate-600">
+                        <div class="grid md:grid-cols-2 gap-4 text-xs">
+                            <div>
+                                <span class="font-bold text-slate-800 block mb-1">📦 Amazon 核心：</span>
+                                Seller Central 基础操作、FBA仓储物流 vs FBM自发货、Listing权重逻辑（标题/五点描述/A+页面）、Buy Box 黄金购物车机制、PPC站内广告投放。
+                            </div>
+                            <div>
+                                <span class="font-bold text-slate-800 block mb-1">🎨 Etsy 蓝海赛道：</span>
+                                聚焦手工艺品、独特礼品、数字虚拟产品、高度个性化定制。高客单，对独特产品力极度友好。
+                            </div>
+                        </div>
+                        <div class="bg-amber-50 border border-amber-200 p-2.5 rounded text-[11px] text-slate-700">
+                            <i class="fa-solid fa-triangle-exclamation text-amber-600"></i> <strong>2026 避坑提醒：</strong> Amazon 在部分区域（如欧洲市场）已下调服饰类等部分品类的佣金与 FBA 履约费，以对抗 Temu 等半托管侵袭。在核算成本时，必须以官方最新的 Seller Central 即时通告为准，不可盲目死抠旧教程。
+                        </div>
+                    </div>
+                    <div class="mt-4 bg-slate-50 p-3 rounded border border-dashed border-slate-200 text-xs">
+                        <strong class="text-indigo-600"><i class="fa-solid fa-trophy"></i> 本周交付物：</strong> 盲拆 10 个 Amazon 爆款竞品的 Listing 架构，详细记录并拆解其标题埋词、五点核心卖点、图片排布策略及高频 Review 痛点。
+                    </div>
+                </div>
+
+                <!-- 第6周 -->
+                <div id="week6" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm scroll-mt-24 transition-all hover:border-indigo-300">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded">第 6 周</span>
+                            <h4 class="text-lg font-bold text-slate-900 mt-1">独立站 Shopify / DTC 实战</h4>
+                        </div>
+                        <span class="text-xs text-amber-600 font-medium bg-amber-50 px-2 py-1 rounded">目标：从0到1独立完成一个具备高转化潜力的店铺搭建</span>
+                    </div>
+                    <div class="space-y-3 text-sm text-slate-600">
+                        <div class="text-xs">
+                            <strong class="text-slate-800 block mb-1">🔥 独立站高转化黄金落地页（Landing Page）架构：</strong>
+                            首屏视觉与核心卖点（Hero Section） → 场景化代入 → 痛点深度剖析 → 产品核心功能与利益点 → 真实用户评价（Social Proof） → 常见问题（FAQ） → 官方保障承诺（退换无忧） → 强视觉唤醒转化引导（CTA 按钮）。
+                        </div>
+                        <div class="bg-indigo-50/50 p-2.5 rounded border border-indigo-100 text-[11px]">
+                            <strong>🛠️ 2026 Shopify 独立站核心技术栈：</strong>建站 (Shopify Markets 跨境多币种本地化配置) | 邮件/自动化 (Klaviyo / Omnisend) | 评价插件 (Judge.me) | 落地页设计 (PageFly) | 客服系统 (Gorgias) | 数据追踪 (Google Analytics 4 & Meta/TikTok Pixel)。
+                        </div>
+                    </div>
+                    <div class="mt-4 bg-slate-50 p-3 rounded border border-dashed border-slate-200 text-xs">
+                        <strong class="text-indigo-600"><i class="fa-solid fa-trophy"></i> 本周交付物：</strong> 利用 Shopify 亲自搭建一个完整的 Demo 零售店铺，确保包含基础首页、至少1个核心产品详情页、FAQ、以及专业的 Shipping & Return Policy（物流与退换货条款政策页）。
+                    </div>
+                </div>
+
+                <!-- 第7周 -->
+                <div id="week7" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm scroll-mt-24 transition-all hover:border-indigo-300">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded">第 7 周</span>
+                            <h4 class="text-lg font-bold text-slate-900 mt-1">内容电商与 TikTok Shop</h4>
+                        </div>
+                        <span class="text-xs text-amber-600 font-medium bg-amber-50 px-2 py-1 rounded">目标：通过轻量化内容撬动自然流，摆脱高昂广告费绑架</span>
+                    </div>
+                    <div class="space-y-3 text-sm text-slate-600">
+                        <div class="bg-slate-900 text-slate-200 font-mono p-3 rounded text-xs">
+                            <span class="text-slate-400 block mb-1">🎬 黄金带货视频万能脚本结构：</span>
+                            Hook前3秒吸睛 → 痛点场景共鸣 → 引入产品解决方案 → 使用过程高光演示 → Before/After 强烈反差对比 → 信任背书与限时强CTA促成购买。
+                        </div>
+                        <div class="text-xs">
+                            <span class="font-bold text-slate-800 block mb-1">🚀 常用短视频爆款内容方向：</span>
+                            Unboxing开箱拆箱、Problem/Solution痛点解决、UGC海外红人真实测评、Gift Idea节日送礼灵感、Weird but useful新奇特实用好物。
+                        </div>
+                        <p class="text-[11px] text-slate-500"><i class="fa-solid fa-chart-line"></i> 社交电商仍是2026年出海最大红利，TikTok 闭环小店、联盟达人分销（Affiliate）和短视频正在颠覆全球用户的传统人货场购买路径。</p>
+                    </div>
+                    <div class="mt-4 bg-slate-50 p-3 rounded border border-dashed border-slate-200 text-xs">
+                        <strong class="text-indigo-600"><i class="fa-solid fa-trophy"></i> 本周交付物：</strong> 为你精选的某一款潜力商品，撰写出 30 条符合 TikTok 调性、包含前3秒 Hook 钩子的原生化短视频脚本。
+                    </div>
+                </div>
+
+                <!-- 第8周 -->
+                <div id="week8" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm scroll-mt-24 transition-all hover:border-indigo-300">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded">第 8 周</span>
+                            <h4 class="text-lg font-bold text-slate-900 mt-1">精细化广告投放入门</h4>
+                        </div>
+                        <span class="text-xs text-amber-600 font-medium bg-amber-50 px-2 py-1 rounded">目标：理解广告的数据验证本质，告别盲目烧钱</span>
+                    </div>
+                    <div class="space-y-3 text-sm text-slate-600">
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs font-mono">
+                            <div class="bg-slate-100 p-1.5 rounded">CPM: 千次展示成本</div>
+                            <div class="bg-slate-100 p-1.5 rounded">CPC: 单次点击成本</div>
+                            <div class="bg-slate-100 p-1.5 rounded">CTR: 点击率</div>
+                            <div class="bg-slate-100 p-1.5 rounded">CVR: 转化率</div>
+                            <div class="bg-slate-100 p-1.5 rounded">CPA: 单次行动/获客成本</div>
+                            <div class="bg-slate-100 p-1.5 rounded">ROAS: 广告投资回报</div>
+                        </div>
+                        <!-- 小预算快速测试法 -->
+                        <div class="bg-indigo-950 text-indigo-100 p-3 rounded-lg text-xs">
+                            <span class="font-bold text-white block mb-1"><i class="fa-solid fa-flask"></i> 科学小预算AB测试法（MVP阶段）：</span>
+                            · 预算控制：单个系列每天 $20 - $50 规模<br>
+                            · 矩阵设置：同时并列测试 3-5 条不同创意的素材，持续连跑 3 天<br>
+                            · 核心监测：优先看 CTR 点击率（评估素材）与 加购率（评估产品页）<br>
+                            · 决策逻辑：迅速果断淘汰低ROAS素材，预算逐步向高ROI优质素材倾斜放大
+                        </div>
+                    </div>
+                    <div class="mt-4 bg-slate-50 p-3 rounded border border-dashed border-slate-200 text-xs">
+                        <strong class="text-indigo-600"><i class="fa-solid fa-trophy"></i> 本周交付物：</strong> 独立制作一份数字广告测试计划书，严格制定测试总预算、素材配比、受众定向标签、止损条件等指标。
+                    </div>
+                </div>
+
+                <!-- 第9周 -->
+                <div id="week9" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm scroll-mt-24 transition-all hover:border-indigo-300">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded">第 9 周</span>
+                            <h4 class="text-lg font-bold text-slate-900 mt-1">物流、支付与海外履约</h4>
+                        </div>
+                        <span class="text-xs text-amber-600 font-medium bg-amber-50 px-2 py-1 rounded">目标：跑通跨境“最后一公里”，保障订单安全稳妥送达</span>
+                    </div>
+                    <div class="space-y-3 text-sm text-slate-600">
+                        <div class="grid md:grid-cols-2 gap-4 text-xs">
+                            <div>
+                                <span class="font-bold text-slate-800 block mb-1">📦 主流物流履约模式：</span>
+                                · 国内直发（小包专线，轻小件MVP首选）<br>
+                                · 海外仓 / Amazon FBA（提前备货，时效快，体验极佳）<br>
+                                · Dropshipping（一件代发，零库存，时效较慢）
+                            </div>
+                            <div>
+                                <span class="font-bold text-slate-800 block mb-1">💳 跨境在线支付网关：</span>
+                                主流包含 PayPal, Stripe 信用卡网关, Shopify Payments。同时在欧洲、亚太等特定市场应注意配置 Klarna（先买后付BNPL）、Apple Pay 等本地化支付。
+                            </div>
+                        </div>
+                        <div class="bg-slate-100 p-2.5 rounded text-[11px] text-slate-500">
+                            2026年出海大环境对物流妥投率及税费透明度要求空前严苛。发货自动化邮件、实时轨迹追踪以及健全的售后反馈，是保障店铺长久结账率、避免信用卡拒付（Chargeback）的基础。
+                        </div>
+                    </div>
+                    <div class="mt-4 bg-slate-50 p-3 rounded border border-dashed border-slate-200 text-xs">
+                        <strong class="text-indigo-600"><i class="fa-solid fa-trophy"></i> 本周交付物：</strong> 为你锁定的首发产品设计一套详尽的供应链履约模型，横向测算直发专线、海外仓备货在时效、头程运费与尾程派送上的净利润损耗。
+                    </div>
+                </div>
+
+                <!-- 第10周 -->
+                <div id="week10" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm scroll-mt-24 transition-all hover:border-indigo-300">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded">第 10 周</span>
+                            <h4 class="text-lg font-bold text-slate-900 mt-1">合规、税务与风险控制</h4>
+                        </div>
+                        <span class="text-xs text-amber-600 font-medium bg-amber-50 px-2 py-1 rounded">目标：死守红线，坚决避免封店、扣货与资金冻结</span>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-4 text-xs text-slate-600">
+                        <div class="space-y-1">
+                            <span class="font-bold text-slate-800 block">🛡️ 知产与基础准入认证：</span>
+                            商标/专利侵权自查、美国 FCC / FDA / CPSIA、欧洲 CE / UKCA / RoHS / REACH 安全准入认证。
+                        </div>
+                        <div class="space-y-1">
+                            <span class="font-bold text-slate-800 block">⚖️ 财税合规红线：</span>
+                            欧洲 <strong>VAT / IOSS</strong> 申报体制、美国各州 <strong>Sales Tax</strong> 远程销售税起征点、隐私政策（GDPR / CCPA）及严禁采集违规数据。
+                        </div>
+                    </div>
+                    <div class="mt-3 bg-rose-50 border-l-4 border-rose-600 p-2 rounded-r text-[11px] text-rose-950 font-medium">
+                        🚨 严厉禁止的行为：网络直接盗图、无授权恶意埋品牌词、刷虚假评价（Manipulating Reviews）、夸大虚假功效。
+                    </div>
+                    <div class="mt-4 bg-slate-50 p-3 rounded border border-dashed border-slate-200 text-xs">
+                        <strong class="text-indigo-600"><i class="fa-solid fa-trophy"></i> 本周交付物：</strong> 针对你选定的出海类目，制作一份详尽的《产品出海合规化准入与防侵权自查风险清单》。
+                    </div>
+                </div>
+
+                <!-- 第11周 -->
+                <div id="week11" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm scroll-mt-24 transition-all hover:border-indigo-300">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded">第 11 周</span>
+                            <h4 class="text-lg font-bold text-slate-900 mt-1">数据分析与运营复盘</h4>
+                        </div>
+                        <span class="text-xs text-amber-600 font-medium bg-amber-50 px-2 py-1 rounded">目标：学会用纯粹的数据指导决策，根除“凭感觉”运营</span>
+                    </div>
+                    <div class="space-y-3 text-sm text-slate-600">
+                        <div class="bg-slate-50 p-2.5 rounded font-mono text-xs text-center border border-slate-200">
+                            <strong>核心全链路漏斗模型：</strong> 曝光展示 → 点击转化 → 访问店铺 → 加入购物车 → 启动结账 → 成功支付 → 邮件促活与复购
+                        </div>
+                        <!-- 互动诊断小游戏 -->
+                        <div class="border border-indigo-100 bg-indigo-50/20 p-3 rounded-lg text-xs">
+                            <span class="font-bold text-slate-900 block mb-2"><i class="fa-solid fa-stethoscope"></i> 数据指标异常定位自我诊断：</span>
+                            <div class="space-y-2" id="quiz-container">
+                                <p class="text-slate-700"><strong>场景测试：</strong> 如果你发现广告的点击率(CTR)很高，但进站后的加购率极低，最该优化哪里？</p>
+                                <div class="flex flex-wrap gap-2 mt-1">
+                                    <button onclick="checkAnswer(this, false)" class="bg-white border border-slate-300 px-3 py-1 rounded hover:bg-slate-50">更换广告视频素材</button>
+                                    <button onclick="checkAnswer(this, true)" class="bg-white border border-slate-300 px-3 py-1 rounded hover:bg-slate-50">优化产品详情页的首屏、定价或补充评价</button>
+                                    <button onclick="checkAnswer(this, false)" class="bg-white border border-slate-300 px-3 py-1 rounded hover:bg-slate-50">调整国际物流派送渠道</button>
+                                </div>
+                                <p id="quiz-feedback" class="mt-1 font-semibold hidden"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 bg-slate-50 p-3 rounded border border-dashed border-slate-200 text-xs">
+                        <strong class="text-indigo-600"><i class="fa-solid fa-trophy"></i> 本周交付物：</strong> 独立封装设计一张标准格式的《独立站周度运营多维指标分析复盘看板模板》。
+                    </div>
+                </div>
+
+                <!-- 第12周 -->
+                <div id="week12" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm scroll-mt-24 transition-all hover:border-indigo-300">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded">第 12 周</span>
+                            <h4 class="text-lg font-bold text-slate-900 mt-1">小规模闭环 MVP 实战落地</h4>
+                        </div>
+                        <span class="text-xs text-amber-600 font-medium bg-amber-50 px-2 py-1 rounded">目标：完成一次全链路闭环，跑通最小可行性出海项目验证</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-2 font-medium">终极通关任务：融会贯通前11周沉淀，最终输出一份高度完整的<strong>《跨境电商出海 MVP 完整实战方案》</strong>，其核心涵盖结构如下：</p>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-[11px] font-mono text-slate-700">
+                        <div class="bg-slate-100 p-2 rounded">1. 核心选品名称</div>
+                        <div class="bg-slate-100 p-2 rounded">2. 精准目标国家</div>
+                        <div class="bg-slate-100 p-2 rounded">3. 细分用户画像</div>
+                        <div class="bg-slate-100 p-2 rounded">4. 消费者痛点剖析</div>
+                        <div class="bg-slate-100 p-2 rounded">5. 差异化产品卖点</div>
+                        <div class="bg-slate-100 p-2 rounded">6. 竞争对手全拆解</div>
+                        <div class="bg-slate-100 p-2 rounded">7. 定价阶梯策略</div>
+                        <div class="bg-slate-100 p-2 rounded">8. 供应链成本利润表</div>
+                        <div class="bg-slate-100 p-2 rounded">9. 店铺落地页结构</div>
+                        <div class="bg-slate-100 p-2 rounded">10. 视频营销脚本</div>
+                        <div class="bg-slate-100 p-2 rounded">11. 广告多组测试计划</div>
+                        <div class="bg-slate-100 p-2 rounded">12. 物流渠道履约架构</div>
+                        <div class="bg-slate-100 p-2 rounded">13. 知产合规清单</div>
+                        <div class="bg-slate-100 p-2 rounded">14. 核心复盘数据指标</div>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="border-slate-200 my-12">
+
+            <!-- 核心能力 -->
+            <section id="core-skills" class="bg-white p-6 md:p-8 rounded-xl border border-slate-200 shadow-sm mb-12 scroll-mt-24">
+                <h3 class="text-xl font-bold text-slate-900 mb-6 flex items-center"><i class="fa-solid fa-brain text-indigo-600 mr-2"></i> 三、 建议你重点死磕的五大核心底座能力</h3>
+                <div class="space-y-4">
+                    <div class="flex items-start space-x-3">
+                        <div class="bg-indigo-100 text-indigo-700 p-2 rounded-lg font-bold text-sm">1</div>
+                        <div>
+                            <h4 class="text-sm font-bold text-slate-900">核心选品与市场研判能力</h4>
+                            <p class="text-xs text-slate-600 mt-0.5">决定成败的核心前提。反复锻炼对三个终极命题的直觉与数据敏锐度：需求是否真实存在？竞争格局是否允许切入？利润毛利空间是否足够宽广？</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <div class="bg-indigo-100 text-indigo-700 p-2 rounded-lg font-bold text-sm">2</div>
+                        <div>
+                            <h4 class="text-sm font-bold text-slate-900">精细化内容解构与包装能力</h4>
+                            <p class="text-xs text-slate-600 mt-0.5">2026年出海正从“主动检索”让位于“内容兴趣激发”。必须精通短视频前3秒吸睛脚本撰写、海外达人红人高效建联、以及拆解 UGC 爆款广告素材的底层视觉逻辑。</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <div class="bg-indigo-100 text-indigo-700 p-2 rounded-lg font-bold text-sm">3</div>
+                        <div>
+                            <h4 class="text-sm font-bold text-slate-900">数据化科学广告投放能力</h4>
+                            <p class="text-xs text-slate-600 mt-0.5">绝不仅是后台按钮的熟悉，而是核心的 AB 快速迭代测试逻辑。用科学小 budget 去高频验证产品市场契合度、受众模型、素材创意以及最利于转化的定价价格锚点。</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <div class="bg-indigo-100 text-indigo-700 p-2 rounded-lg font-bold text-sm">4</div>
+                        <div>
+                            <h4 class="text-sm font-bold text-slate-900">独立站系统化高信任转化能力</h4>
+                            <p class="text-xs text-slate-600 mt-0.5">独立站运营的核心命题，是如何高效率将冰冷的陌生流量转化为坚固的信任和订单。需重点打磨首屏视觉张力、严密的海外评价体系、无缝流畅的 Checkout 结账与支付顺畅体验。</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <div class="bg-emerald-100 text-emerald-700 p-2 rounded-lg font-bold text-sm"><i class="fa-solid fa-robot"></i></div>
+                        <div>
+                            <h4 class="text-sm font-bold text-emerald-900">AI 高级自动化运营与提效能力 (专属于你的杠杆)</h4>
+                            <p class="text-xs text-slate-600 mt-0.5">全面调动 LLM 技术：自动化选品爬虫数据清洗、自动化多语言原生 Listing 描述生成、广告文案与短视频脚本无限量矩阵产出、海外评论情绪判别、自动化邮件营销以及客服首轮智能应答回复。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 学习路径规划 -->
+            <section id="path" class="bg-white p-6 md:p-8 rounded-xl border border-slate-200 shadow-sm mb-12 scroll-mt-24">
+                <h3 class="text-xl font-bold text-slate-900 mb-6 flex items-center"><i class="fa-solid fa-compass text-indigo-600 mr-2"></i> 四、 推荐梯度实战推进路径</h3>
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div class="border border-slate-200 p-4 rounded-xl relative">
+                        <span class="absolute -top-3 left-4 bg-slate-900 text-white text-[10px] px-2 py-0.5 font-bold rounded">阶段 1</span>
+                        <h4 class="text-sm font-bold text-slate-900 mb-2 mt-1">纯理论与数据“模拟盘”</h4>
+                        <p class="text-xs text-slate-500 mb-2">时长：2周 | 预估预算：￥0</p>
+                        <p class="text-xs text-slate-600 leading-relaxed">暂不投入任何采购资金，全神贯注完成模拟选品、深度竞品拆解、全要素利润精算、产品落地页结构编排以及短视频广告脚本规划，高密度磨炼市场敏感度。</p>
+                    </div>
+                    <div class="border border-indigo-200 bg-indigo-50/10 p-4 rounded-xl relative">
+                        <span class="absolute -top-3 left-4 bg-indigo-600 text-white text-[10px] px-2 py-0.5 font-bold rounded">阶段 2</span>
+                        <h4 class="text-sm font-bold text-slate-900 mb-2 mt-1">低成本轻量化 MVP 测试</h4>
+                        <p class="text-xs text-indigo-600 mb-2 font-medium">时长：4周 | 总预算：￥3000-￥6000</p>
+                        <p class="text-xs text-slate-600 leading-relaxed">挑选体积小、无强监管认证限制的单品，将核心预算密集砸向海外独立站建站工具、必要的素材制作与单日小额数字广告AB测试，不以短期盈利为第一考核目标，核心旨在彻底跑通实战闭环。</p>
+                    </div>
+                    <div class="border border-slate-200 p-4 rounded-xl relative">
+                        <span class="absolute -top-3 left-4 bg-slate-900 text-white text-[10px] px-2 py-0.5 font-bold rounded">阶段 3</span>
+                        <h4 class="text-sm font-bold text-slate-900 mb-2 mt-1">锁定决战主战场规模放大</h4>
+                        <p class="text-xs text-slate-500 mb-2">时长：长期持续演进</p>
+                        <p class="text-xs text-slate-600 leading-relaxed">在平稳跑通 1-2 个轻量级出海 MVP 模型后，结合手中数据反馈与团队资源实力，最终选定长期深耕的垂直主战场：深耕 Amazon 精品、Shopify DTC 品牌站，或 TikTok Shop 内容分销爆品。</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 每日安排与品类推荐 -->
+            <div class="grid md:grid-cols-2 gap-6 mb-12">
+                <section id="schedule" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm scroll-mt-24">
+                    <h3 class="text-base font-bold text-slate-900 mb-4 flex items-center"><i class="fa-solid fa-business-time text-indigo-600 mr-2"></i> 五、 推荐每日 2 小时高效时间块分配</h3>
+                    <div class="space-y-3 text-xs text-slate-600">
+                        <div class="p-2.5 bg-slate-50 rounded border-l-4 border-slate-400">
+                            <strong class="text-slate-800 block">第 1 小时：纯粹理论吸收与案例拆解</strong>
+                            死磕官方最新政策、深度解剖海外竞争对手、追踪全球最新行业趋势。
+                        </div>
+                        <div class="p-2.5 bg-indigo-50 rounded border-l-4 border-indigo-600">
+                            <strong class="text-indigo-900 block">第 2 小时：强结果导向的动手实操（硬性要求）</strong>
+                            高强度制作利润测算表格、亲手搭建页面、撰写出海营销文案脚本。<strong>每周必须有一份实质性、可交付的文档资产沉淀！</strong>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                    <h3 class="text-base font-bold text-slate-900 mb-4 flex items-center"><i class="fa-solid fa-basket-shopping text-indigo-600 mr-2"></i> 六、 新手入门首选品类 vs 严厉避坑红线</h3>
+                    <div class="grid grid-cols-2 gap-3 text-[11px]">
+                        <div class="bg-emerald-50/50 p-2.5 rounded border border-emerald-100">
+                            <strong class="text-emerald-800 block mb-1"><i class="fa-solid fa-thumbs-up"></i> 极力推荐练手品类：</strong>
+                            宠物出行新奇特用品、轻便家居收纳好物、极简桌面生产力效率工具、轻量化居家健身小器材、创意客制化礼品。
+                        </div>
+                        <div class="bg-rose-50/50 p-2.5 rounded border border-rose-100">
+                            <strong class="text-rose-800 block mb-1"><i class="fa-solid fa-triangle-exclamation"></i> 严禁初期触碰红线：</strong>
+                            电子烟、营养保健品、生鲜食品、二类医疗器械、大功率高压电子产品、严苛限制的儿童玩具、明显知产侵权外贸仿牌。
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- 全局工具库 -->
+            <section id="tools" class="bg-white p-6 md:p-8 rounded-xl border border-slate-200 shadow-sm mb-12 scroll-mt-24">
+                <h3 class="text-xl font-bold text-slate-900 mb-6 flex items-center"><i class="fa-solid fa-toolbox text-indigo-600 mr-2"></i> 七、 全局核心出海运营工具箱矩阵</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+                    <div class="border border-slate-100 p-3 rounded bg-slate-50/50">
+                        <strong class="text-slate-800 block mb-1.5"><i class="fa-solid fa-search text-indigo-600"></i> 数据与选品：</strong>
+                        <p class="text-slate-500 leading-relaxed font-mono text-[11px]">Amazon Sellers<br>Google Trends<br>TikTok Center<br>Meta Ads Library<br>Similarweb / Semrush</p>
+                    </div>
+                    <div class="border border-slate-100 p-3 rounded bg-slate-50/50">
+                        <strong class="text-slate-800 block mb-1.5"><i class="fa-solid fa-globe text-indigo-600"></i> 核心建站：</strong>
+                        <p class="text-slate-500 leading-relaxed font-mono text-[11px]">Shopify<br>WooCommerce<br>Shopline<br>BigCommerce</p>
+                    </div>
+                    <div class="border border-slate-100 p-3 rounded bg-slate-50/50">
+                        <strong class="text-slate-800 block mb-1.5"><i class="fa-solid fa-wand-magic-sparkles text-indigo-600"></i> 素材设计：</strong>
+                        <p class="text-slate-500 leading-relaxed font-mono text-[11px]">Canva<br>Figma<br>Midjourney<br>CapCut剪映海外版<br>Runway AI</p>
+                    </div>
+                    <div class="border border-slate-100 p-3 rounded bg-slate-50/50">
+                        <strong class="text-slate-800 block mb-1.5"><i class="fa-solid fa-chart-pie text-indigo-600"></i> 精细化客资运营：</strong>
+                        <p class="text-slate-500 leading-relaxed font-mono text-[11px]">Klaviyo (邮件)<br>Judge.me (留评)<br>Gorgias (独立站客服)<br>Google Analytics 4<br>Looker Studio</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 技术与AI进阶方向 -->
+            <section id="ai-future" class="bg-gradient-to-br from-slate-900 to-indigo-950 text-white p-6 md:p-8 rounded-2xl shadow-md scroll-mt-24">
+                <div class="flex items-center space-x-2 mb-4">
+                    <div class="bg-emerald-500 text-slate-950 p-1 rounded">
+                        <i class="fa-solid fa-laptop-code text-sm"></i>
+                    </div>
+                    <h3 class="text-lg font-bold">八、 技术流破局：结合你技术背景的长期进阶长远规划</h3>
+                    
+                </div>
+                <p class="text-xs text-slate-400 mb-6 leading-relaxed">
+                    拥有代码与 AI 技术背景的卖家，其终极归宿往往不只是人工卖货，而是通过程序与 AI 工作流，把运营资产沉淀为系统、自动化工具甚至软件服务（SaaS）。
+                </p>
+                
+                <div class="space-y-4 text-xs">
+                    <div class="bg-white/5 border border-white/10 p-4 rounded-xl">
+                        <strong class="text-emerald-400 block mb-1"><i class="fa-solid fa-spider"></i> 战术方向 1：搭建高度定制化的 AI 智能选品引擎</strong>
+                        <p class="text-slate-300 mt-1 leading-relaxed">利用 Python 编写分布式爬虫深度清洗数据，全天候高频监听监控 TikTok 爆品热度视频、Amazon 畅销新品榜变动、Meta 实时高互动高投产广告素材。辅以大语言模型进行向量分析，直接自动化输出包含产品机会分值、竞争态势演变、基础利润模型测算在内的决策报告。</p>
+                    </div>
+                    <div class="bg-white/5 border border-white/10 p-4 rounded-xl">
+                        <strong class="text-emerald-400 block mb-1"><i class="fa-solid fa-gears"></i> 战术方向 2：全链路 AI 跨境智能运营自动化工作流 (SaaS 化雏形)</strong>
+                        <p class="text-slate-300 mt-1 leading-relaxed">深度打通大模型 API，只需向系统输入一键抓取的供应商 1688 或源头工厂产品链接，即可实现自动一键汉译英与本地化地道文风润色、精准长尾关键词埋词、生成符合高转化漏斗的落地页 HTML 片段、以及自动多语种客服邮件与退换货情绪工单智能化初审处理。</p>
+                    </div>
+                    <div class="bg-white/5 border border-white/10 p-4 rounded-xl">
+                        <strong class="text-emerald-400 block mb-1"><i class="fa-solid fa-photo-film"></i> 战术方向 3：AI 驱动的内容电商全自动化流水线</strong>
+                        <p class="text-slate-300 mt-1 leading-relaxed">输入标准商品SKU，依靠工作流大模型一键自动拆解核心卖点、衍生出30组脚本、自动匹配多国本土原生音色进行 AI 语音配音合成。未来配合“Agentic Commerce”大趋势，让 AI 代理数据与海外各大平台进行结构化库存同步与动态智能价盘调优。</p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- 简易浮动回到顶部 -->
+    <a href="#" class="fixed bottom-6 right-6 bg-slate-900 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-lg hover:bg-indigo-600 transition-all z-50">
+        <i class="fa-solid fa-arrow-up"></i>
+    </a>
+
+    <!-- 交互逻辑 JavaScript -->
+    <script>
+        // 12周计划多选打卡及总进度条控制
+        document.addEventListener('DOMContentLoaded', () => {
+            const checkboxes = document.querySelectorAll('.week-chk');
+            const totalProgress = document.getElementById('total-progress');
+            const progressPercent = document.getElementById('progress-percent');
+
+            // 从 LocalStorage 读取用户学习进度缓存
+            const savedProgress = JSON.parse(localStorage.getItem('crossBorderLearningProgress')) || [];
+            checkboxes.forEach(chk => {
+                if(savedProgress.includes(chk.dataset.week)) {
+                    chk.checked = true;
+                }
+                
+                // 监听复选框状态改变
+                chk.addEventListener('change', () => {
+                    const currentChecked = [];
+                    checkboxes.forEach(c => {
+                        if(c.checked) currentChecked.push(c.dataset.week);
+                    });
+                    localStorage.setItem('crossBorderLearningProgress', JSON.stringify(currentChecked));
+                    updateProgressBar(currentChecked.length, checkboxes.length);
+                });
+            });
+
+            const updateProgressBar = (checkedCount, totalCount) => {
+                const percentage = Math.round((checkedCount / totalCount) * 100);
+                totalProgress.style.width = `${percentage}%`;
+                progressPercent.innerText = `${percentage}%`;
+            };
+
+            // 首次初始化加载进度
+            updateProgressBar(savedProgress.length, checkboxes.length);
+        });
+
+        // 简易单品售价心算模拟器逻辑
+        function calculatePrice() {
+            const cost = parseFloat(document.getElementById('calc-cost').value) || 0;
+            const ship = parseFloat(document.getElementById('calc-ship').value) || 0;
+            const cpa = parseFloat(document.getElementById('calc-cpa').value) || 0;
+            
+            // 粗略算入基础运营杂费及平台手续费转化率摊销（按保本售价的15%粗略预估进行保本倒推）
+            const basePrice = (cost + ship + cpa) / 0.85;
+            
+            document.getElementById('calc-result').innerText = `预估保本零售售价（未计退损与佣金）：$${basePrice.toFixed(2)}`;
+        }
+
+        // 第11周漏斗诊断互动测试
+        function checkAnswer(button, isCorrect) {
+            const feedback = document.getElementById('quiz-feedback');
+            feedback.classList.remove('hidden', 'text-emerald-600', 'text-rose-600');
+            
+            // 重置所有按钮样式
+            const buttons = button.parentNode.querySelectorAll('button');
+            buttons.forEach(btn => {
+                btn.className = "bg-white border border-slate-300 px-3 py-1 rounded hover:bg-slate-50";
+            });
+
+            if (isCorrect) {
+                button.className = "bg-emerald-100 border border-emerald-400 text-emerald-800 px-3 py-1 rounded font-medium";
+                feedback.innerText = "🎉 完全正确！高点击率(CTR)说明引流素材及广告切入点足够吸睛成功；但用户入店后不加购直接流失，说明产品详情页设计落后、缺乏买家信任背书(Social Proof)或定价设置超出买家预期。";
+                feedback.classList.add('text-emerald-700');
+            } else {
+                button.className = "bg-rose-100 border border-rose-400 text-rose-800 px-3 py-1 rounded font-medium";
+                feedback.innerText = "❌ 答案不太准确哦。点击率(CTR)高已经自证了广告视频素材本身是没有大问题的，盲目更换素材无法解决入店后的高流失率。请再重新审视产品页本身。";
+                feedback.classList.add('text-rose-700');
+            }
+        }
+    </script>
+</body>
+</html>

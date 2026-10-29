@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>跨境电商出海：12周互动实战学习教程</title>
+  <!-- FontAwesome Icons for modern aesthetic -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Core Design CSS -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Confetti particle engine canvas overlay -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Mobile Sidebar Backdrop -->
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+  <!-- Overall App Layout -->
+  <div class="app-container">
+
+    <!-- Left navigation and status tracker sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <i class="fa-solid fa-earth-americas"></i>
+        <div class="brand-text">
+          <h1>跨境出海研习社</h1>
+          <span>12-Week Bootcamp</span>
+        </div>
+      </div>
+
+      <!-- Realtime LocalStorage Progress Card -->
+      <div class="sidebar-progress">
+        <div class="progress-header">
+          <span class="progress-title">整体学习进度</span>
+          <span class="progress-percentage" id="progress-percent">0%</span>
+        </div>
+        <div class="progress-bar-container">
+          <div class="progress-bar-fill" id="progress-bar"></div>
+        </div>
+      </div>
+
+      <!-- Scrollable Chapters TOC Nav -->
+      <nav class="sidebar-nav" id="chapters-nav">
+        <div class="nav-section-title">课程导言</div>
+        <!-- Injected dynamically by app.js -->
+        
+        <div class="nav-section-title">12周系统实操</div>
+        <!-- Injected dynamically by app.js -->
+        
+        <div class="nav-section-title">能力与AI进阶</div>
+        <!-- Injected dynamically by app.js -->
+      </nav>
+
+      <!-- Sidebar Bottom Action Tray -->
+      <div class="sidebar-footer">
+        <div class="footer-stats">
+          <span>完成度：<strong id="completed-count">0</strong> / <strong id="total-count">14</strong></span>
+        </div>
+        <div class="footer-actions">
+          <button class="btn-sidebar-icon" id="theme-toggle-btn" title="切换亮暗主题">
+            <i class="fa-solid fa-moon"></i>
+            <span>深色模式</span>
+          </button>
+          <button class="btn-sidebar-icon" id="reset-progress-btn" title="清除所有学习记录">
+            <i class="fa-solid fa-rotate-left"></i>
+            <span>重置进度</span>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Right Workspace Reader & Tools -->
+    <main class="main-viewport" id="main-viewport">
+      <!-- Breadcrumbs and Chapter Complete Controller -->
+      <header class="top-navbar">
+        <div style="display: flex; align-items: center; gap: 15px;">
+          <button class="burger-menu-btn" id="burger-menu-btn" aria-label="打开目录">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="nav-breadcrumbs">
+            <span class="crumb-parent">出海系统课</span>
+            <i class="fa-solid fa-chevron-right"></i>
+            <span class="active-crumb" id="breadcrumb-current-chapter">定位与路线</span>
+          </div>
+        </div>
+
+        <div class="navbar-actions">
+          <button class="btn-complete-toggle" id="chapter-complete-btn">
+            <i class="fa-regular fa-circle-check"></i>
+            <span>标为已学完</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Mount space for chapters contents, interactive widgets, and quizzes -->
+      <div class="content-wrapper">
+        <article id="course-content-area">
+          <!-- Dynamic rendering space -->
+        </article>
+      </div>
+    </main>
+
+  </div>
+
+  <!-- CDN Canvas Confetti for celebrations -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <!-- Course Content Structured Text Database -->
+  <script src="js/content-data.js"></script>
+  <!-- Core Logic SPA Engine -->
+  <script src="js/app.js"></script>
+</body>
+</html>
